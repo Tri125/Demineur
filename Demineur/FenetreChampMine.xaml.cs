@@ -148,7 +148,11 @@ namespace Demineur
                 else
                 {
                     // Zone vide sans mine avoisinante = pas d'image.
-                    imageZone.Source = null;
+                    //ImageZone.Source = null;
+                    List<Color> colors = new List<Color>();
+                    colors.Add(Colors.Transparent);
+                    imageZone.Source = BitmapSource.Create(Zone.TAILLE_ZONE, Zone.TAILLE_ZONE, 250, 250, PixelFormats.Indexed1, 
+                        new BitmapPalette(colors), new byte[Zone.TAILLE_ZONE * Zone.TAILLE_ZONE], Zone.TAILLE_ZONE);
                 }
 
             }
@@ -182,6 +186,7 @@ namespace Demineur
                     Grid.SetZIndex(border, 1);
                     border.Child = imgAffichage;
                     grdChampMine.Children.Add(border);
+					imgAffichage.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
                 }
             }
 
@@ -219,6 +224,13 @@ namespace Demineur
                 }
             }
         }
+
+		private void btnCouverture_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Console.WriteLine("IN");
+			if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
+				Console.WriteLine("Double");
+		}
 
         /// <summary>
         /// Gestion des cliques gauches sur les boutons de couverture.
