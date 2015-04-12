@@ -75,7 +75,7 @@ namespace Demineur
         {
             List<Zone> colonne;
             Image imgAffichage;
-
+            Border border;
             for (int i = 0; i <= Jeu.LstZones.Count - 1; i++)
             {
                 colonne = Jeu.LstZones[i];
@@ -83,13 +83,17 @@ namespace Demineur
                 for (int j = 0; j <= colonne.Count - 1; j++)
                 {
                     imgAffichage = colonne[j].ImageZone;
-                    
-                    Grid.SetColumn(imgAffichage, i);
-                    Grid.SetRow(imgAffichage, j);
-                    // Les images "cachées" auront toutes un ZIndex = 1.
-                    Grid.SetZIndex(imgAffichage,1);
 
-                    grdChampMine.Children.Add(imgAffichage);
+                    border = new Border();
+                    border.BorderBrush = Brushes.Transparent;
+                    border.BorderThickness = new Thickness(1, 1, 1, 1);
+
+                    Grid.SetColumn(border, i);
+                    Grid.SetRow(border, j);
+                    // Les images "cachées" auront toutes un ZIndex = 1.
+                    Grid.SetZIndex(border,1);
+                    border.Child = imgAffichage;
+                    grdChampMine.Children.Add(border);
                 }
             }
 
@@ -140,6 +144,8 @@ namespace Demineur
 
             if (!JoueurMort)
             {
+                int column;
+                int row;
                 btnSender = (Button)sender;
 
 				// Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
@@ -151,7 +157,17 @@ namespace Demineur
                 // Faire disparaitre le bouton, quoiqu'il arrive.
                 btnSender.Visibility = Visibility.Hidden;
 
-                if (Jeu.LstZones[Grid.GetColumn(btnSender)][Grid.GetRow(btnSender)].ContientMine)
+                column = Grid.GetColumn(btnSender);
+                row = Grid.GetRow(btnSender);
+                //http://stackoverflow.com/questions/1511722/how-to-programmatically-access-control-in-wpf-grid-by-row-and-column-index
+                Object border = grdChampMine.Children
+                    .Cast<UIElement>()
+                    .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column);
+                if (border is Border)
+                {
+                    (border as Border).BorderBrush = Brushes.Black;
+                }
+                if (Jeu.LstZones[column][row].ContientMine)
                 {
                     Image imgBombe = new Image();
                     BitmapImage bImg = new BitmapImage();
