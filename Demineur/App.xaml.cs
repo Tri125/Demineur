@@ -13,5 +13,14 @@ namespace Demineur
     /// </summary>
     public partial class App : Application
     {
+        public static ConstructeurOption config = new ConstructeurOption();
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            config.Initialisation();
+            Console.WriteLine(config.OptionUtilisateur.TailleCases);
+        }
+
     }
 }

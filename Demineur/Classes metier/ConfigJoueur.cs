@@ -12,10 +12,10 @@ namespace Demineur
 	[Serializable]
 	public class ConfigJoueur
 	{
-		[XmlElement("Mines de coins")]
+		[XmlElement("Mines_de_coins")]
 		public bool MinesCoins { get; set; }
 
-		[XmlElement("Taille des cases")]
+		[XmlElement("Taille_des_cases")]
 		public int TailleCases { get; set; }
 
 		public ConfigJoueur() { }

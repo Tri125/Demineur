@@ -10,22 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Demineur
 {
-	/// <summary>
-	/// Logique d'interaction pour MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
-		public MainWindow()
-		{
-			InitializeComponent();
-
-			FenetreChampMines fenetreJeu = new FenetreChampMines(5, 5, 4);
-			gridPrincipale.Children.Add(fenetreJeu);
-		}
-	}
+    /// <summary>
+    /// Interaction logic for FenetreConfiguration.xaml
+    /// </summary>
+    public partial class FenetreConfiguration : Window
+    {
+        public FenetreConfiguration()
+        {
+            InitializeComponent();
+        }
+    }
 }
