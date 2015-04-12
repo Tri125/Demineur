@@ -142,6 +142,12 @@ namespace Demineur
             {
                 btnSender = (Button)sender;
 
+				// Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
+				// la présence de ce type de "content" signifie qu'il y a une image.
+				if ((btnSender.Content is StackPanel))
+				{
+					return;
+				}
                 // Faire disparaitre le bouton, quoiqu'il arrive.
                 btnSender.Visibility = Visibility.Hidden;
 
