@@ -19,7 +19,6 @@ namespace Demineur
         {
             base.OnStartup(e);
             config.Initialisation();
-            Console.WriteLine(config.OptionUtilisateur.TailleCases);
         }
 
     }
