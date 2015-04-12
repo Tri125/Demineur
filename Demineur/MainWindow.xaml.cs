@@ -26,9 +26,12 @@ namespace Demineur
 
 			FenetreChampMines fenetreJeu = new FenetreChampMines(5, 5, 4);
 			gridPrincipale.Children.Add(fenetreJeu);
-
-            FenetreConfiguration fen = new FenetreConfiguration();
-            fen.Show();
 		}
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            FenetreConfiguration fenConfig = new FenetreConfiguration();
+            fenConfig.ShowDialog();
+        }
 	}
 }

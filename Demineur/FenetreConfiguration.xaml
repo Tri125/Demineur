@@ -1,12 +1,14 @@
 ﻿<Window x:Class="Demineur.FenetreConfiguration"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="FenetreConfiguration" Height="300" Width="300">
+        Title="Configuration" Height="300" Width="300">
     <Grid>
         <CheckBox Content="Mines de coins" HorizontalAlignment="Left" Margin="101,76,0,0" VerticalAlignment="Top"/>
         <Slider Name="sTaille" HorizontalAlignment="Left" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Minimum="15" Maximum="40" Margin="63,141,0,0" VerticalAlignment="Top" Width="210"/>
         <Label Content="Taille des cases :" HorizontalAlignment="Left" Margin="101,110,0,0" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding ElementName=sTaille, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right" IsEnabled="False" Width="40" Height="30" Margin="125,192,127,58" />
+        <TextBox Text="{Binding ElementName=sTaille, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Center" IsEnabled="False" Width="40" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,183,127,57" />
+        <Button Content="Button" HorizontalAlignment="Left" Margin="182,227,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="41,227,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>
