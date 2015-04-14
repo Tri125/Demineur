@@ -35,7 +35,7 @@ namespace Demineur
 
             // Affiche le premier niveau - les mines et les chiffres.
             afficherZones();
-                        
+
             // Couvre le premier niveau d'un second niveau - les éléments qui cachent le jeu.
             afficherCouverture();
 
@@ -50,7 +50,7 @@ namespace Demineur
         {
             ColumnDefinition colDefinition;
             RowDefinition rowDefinition;
-            
+
             // Définir les colonnes et rangées de la Grid.
             for (int i = 0; i < Jeu.LargeurChampMine; i++)
             {
@@ -91,7 +91,7 @@ namespace Demineur
                     Grid.SetColumn(border, i);
                     Grid.SetRow(border, j);
                     // Les images "cachées" auront toutes un ZIndex = 1.
-                    Grid.SetZIndex(border,1);
+                    Grid.SetZIndex(border, 1);
                     border.Child = imgAffichage;
                     grdChampMine.Children.Add(border);
                 }
@@ -117,7 +117,7 @@ namespace Demineur
 
                     btnCouverture.Height = Zone.TAILLE_ZONE;
                     btnCouverture.Width = Zone.TAILLE_ZONE;
-                    btnCouverture.Focusable = false;                    
+                    btnCouverture.Focusable = false;
                     // On précise les gestionnaires d'évènements pour le bouton.
                     btnCouverture.Click += new RoutedEventHandler(btnCouverture_Click);
                     btnCouverture.MouseRightButtonUp += new MouseButtonEventHandler(btnCouverture_MouseRightButtonUp);
@@ -148,25 +148,34 @@ namespace Demineur
                 int row;
                 btnSender = (Button)sender;
 
-				// Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
-				// la présence de ce type de "content" signifie qu'il y a une image.
-				if ((btnSender.Content is StackPanel))
-				{
-					return;
-				}
-                // Faire disparaitre le bouton, quoiqu'il arrive.
-                btnSender.Visibility = Visibility.Hidden;
+                // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
+                // la présence de ce type de "content" signifie qu'il y a une image.
+                if ((btnSender.Content is StackPanel))
+                {
+                    return;
+                }
 
                 column = Grid.GetColumn(btnSender);
                 row = Grid.GetRow(btnSender);
-                //http://stackoverflow.com/questions/1511722/how-to-programmatically-access-control-in-wpf-grid-by-row-and-column-index
-                Object border = grdChampMine.Children
-                    .Cast<UIElement>()
-                    .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column);
-                if (border is Border)
+
+                foreach (Zone z in ParcoursZone.ObtenirCaseVidePropager(Jeu.LstZones[column][row]))
                 {
-                    (border as Border).BorderBrush = Brushes.Black;
+                    int columnPropager = 0;
+                    int rowPropager = 0;
+                    ObtenirCoordGrille(z, ref rowPropager, ref columnPropager);
+                    Object obj = grdChampMine.Children
+                    .Cast<UIElement>()
+                    .First(s => Grid.GetRow(s) == rowPropager && Grid.GetColumn(s) == columnPropager && Grid.GetZIndex(s) == 2);
+                    Button button = (obj as Button);
+                    if((button.Content is StackPanel))
+                    {
+                        continue;
+                    }
+                    button.Visibility = Visibility.Hidden;
+                    //ReveleBoutonCoord(rowPropager, columnPropager);
+                    ReveleBordure(rowPropager, columnPropager);
                 }
+
                 if (Jeu.LstZones[column][row].ContientMine)
                 {
                     Image imgBombe = new Image();
@@ -206,7 +215,7 @@ namespace Demineur
                 // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
                 // la présence de ce type de "content" signifie qu'il y a une image.
                 if ((btnSender.Content is StackPanel))
-                { 
+                {
                     btnSender.Content = null;
                 }
                 else
@@ -227,7 +236,42 @@ namespace Demineur
                     btnSender.Content = sp;
                 }
             }
-            
+
         }
+
+        private void ReveleBordure(int row, int column)
+        {
+            //http://stackoverflow.com/questions/1511722/how-to-programmatically-access-control-in-wpf-grid-by-row-and-column-index
+            Object border = grdChampMine.Children
+                .Cast<UIElement>()
+                .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column);
+            if (border is Border)
+            {
+                (border as Border).BorderBrush = Brushes.Black;
+            }
+        }
+
+        private void ObtenirCoordGrille(Zone z, ref int row, ref int column)
+        {
+            for (int i = 0; i < Jeu.LstZones.Count; i++)
+            {
+                for (int j = 0; j < Jeu.LstZones[0].Count; j++)
+                {
+                    if (Jeu.LstZones[i][j] == z)
+                    {
+                        column = i;
+                        row = j;
+                    }
+                }
+            }
+        }
+
+        //private void ReveleBoutonCoord(int row, int column)
+        //{
+        //    Object bouton = grdChampMine.Children
+        //    .Cast<UIElement>()
+        //    .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
+        //    (bouton as Button).Visibility = Visibility.Hidden;
+        //}
     }
 }

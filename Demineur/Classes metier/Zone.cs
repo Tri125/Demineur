@@ -18,9 +18,10 @@ namespace Demineur
 
         #region Attributs
 
+
         public bool ContientMine { get; set; }
 
-        private ListeVoisin LstVoisins { get; set; }
+        public ListeVoisin LstVoisins { get; private set; }
 
         public Image ImageZone { get; private set; }
 
@@ -107,7 +108,7 @@ namespace Demineur
         /// Permet de compter le nombre de mines chez les voisins de la zone.
         /// </summary>
         /// <returns>Une valeur entre 0 et n, n étant égal au nombre de voisins de la case.</returns>
-        private int compterMineVoisines()
+        public int compterMineVoisines()
         {
             int nbMines = 0;
 
@@ -139,6 +140,8 @@ namespace Demineur
         {
             LstVoisins = new ListeVoisin(voisinNO, voisinN, voisinNE, voisinO, voisinE, voisinSO, voisinS, voisinSE);
         }
+
+
 
         #endregion
 
