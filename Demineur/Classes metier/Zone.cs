@@ -14,7 +14,7 @@ namespace Demineur
     public class Zone
     {
         // La taille, en pixel, d'une zone lors de l'affichage.
-        public static int TAILLE_ZONE = 20;
+        public static readonly int TAILLE_ZONE;
 
         #region Attributs
 
@@ -26,6 +26,12 @@ namespace Demineur
         public Image ImageZone { get; private set; }
 
         #endregion
+
+
+        static Zone()
+        {
+            TAILLE_ZONE = App.config.OptionUtilisateur.TailleCases;
+        }
 
         /// <summary>
         /// Constructeur de base de la classe Zone.
@@ -57,8 +63,8 @@ namespace Demineur
                 ImageZone.Source = bImg;
             }
             else
-            { 
-                nbMines = compterMineVoisines(); 
+            {
+                nbMines = compterMineVoisines();
                 if (nbMines != 0)
                 {
                     bImg = new BitmapImage();
@@ -67,7 +73,7 @@ namespace Demineur
 
                     switch (nbMines)
                     {
-                        case 1 : 
+                        case 1:
                             bImg.UriSource = new Uri(@"Images\chiffre1.png", UriKind.RelativeOrAbsolute);
                             break;
                         case 2:
@@ -97,7 +103,7 @@ namespace Demineur
                     ImageZone.Source = bImg;
                 }
                 else
-                { 
+                {
                     // Zone vide sans mine avoisinante = pas d'image.
                     ImageZone.Source = null;
                 }
@@ -136,7 +142,7 @@ namespace Demineur
         /// <param name="voisinSO">Le voisin en base à gauche (sud ouest).</param>
         /// <param name="voisinS">Le voisin en bas (sud).</param>
         /// <param name="voisinSE">Le voisin en bas à droite (sud est).</param>
-        public void assignerVoisins (Zone voisinNO, Zone voisinN, Zone voisinNE, Zone voisinO, Zone voisinE, Zone voisinSO, Zone voisinS, Zone voisinSE)
+        public void assignerVoisins(Zone voisinNO, Zone voisinN, Zone voisinNE, Zone voisinO, Zone voisinE, Zone voisinSO, Zone voisinS, Zone voisinSE)
         {
             LstVoisins = new ListeVoisin(voisinNO, voisinN, voisinNE, voisinO, voisinE, voisinSO, voisinS, voisinSE);
         }
