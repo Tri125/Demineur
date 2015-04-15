@@ -57,6 +57,9 @@ namespace Demineur
             afficherCouverture();
 
             JoueurMort = false;
+
+            if (!App.config.OptionUtilisateur.MinesCoins)
+                ReveleCoins();
         }
 
         /// <summary>
@@ -413,5 +416,28 @@ namespace Demineur
 
         }
 
+        private void ReveleBoutonCoord(int row, int column)
+        {
+            Object bouton = grdChampMine.Children
+            .Cast<UIElement>()
+            .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
+            (bouton as Button).Visibility = Visibility.Hidden;
+        }
+
+        private void ReveleCoins()
+        {
+            List<Tuple<int, int>> listCoord = new List<Tuple<int, int>>();
+            listCoord.Add(Tuple.Create(0, 0));
+            listCoord.Add(Tuple.Create(0, Jeu.LargeurChampMine - 1));
+            listCoord.Add(Tuple.Create(Jeu.LargeurChampMine - 1, 0));
+            listCoord.Add(Tuple.Create(Jeu.LargeurChampMine - 1, Jeu.HauteurChampMine - 1));
+
+            foreach (Tuple<int, int> coord in listCoord)
+            {
+                ReveleBoutonCoord(coord.Item1, coord.Item2);
+                ReveleBordure(coord.Item1, coord.Item2);
+            }
+
+        }
     }
 }
