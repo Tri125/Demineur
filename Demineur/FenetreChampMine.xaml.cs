@@ -21,7 +21,7 @@ namespace Demineur
     public partial class FenetreChampMines : UserControl
     {
         private ChampMines Jeu { get; set; }
-        private bool JoueurMort { get; set; }
+        private bool PartieTermine { get; set; }
 
         public FenetreChampMines(int largeur, int hauteur, int nbMines)
         {
@@ -39,7 +39,7 @@ namespace Demineur
             // Couvre le premier niveau d'un second niveau - les éléments qui cachent le jeu.
             afficherCouverture();
 
-            JoueurMort = false;
+            PartieTermine = false;
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!JoueurMort)
+            if (!PartieTermine)
             {
                 int column;
                 int row;
@@ -193,7 +193,7 @@ namespace Demineur
 
                     grdChampMine.Children.Add(imgBombe);
 
-                    JoueurMort = true;
+                    Perdu();
                 }
             }
         }
@@ -208,7 +208,7 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!JoueurMort)
+            if (!PartieTermine)
             {
                 btnSender = (Button)sender;
 
@@ -273,5 +273,15 @@ namespace Demineur
         //    .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
         //    (bouton as Button).Visibility = Visibility.Hidden;
         //}
+
+        private void Perdu()
+        {
+            PartieTermine = true;
+        }
+
+        private void Gagnee()
+        {
+            PartieTermine = true;
+        }
     }
 }
