@@ -15,23 +15,28 @@ using System.Windows.Shapes;
 
 namespace Demineur
 {
-	/// <summary>
-	/// Logique d'interaction pour MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
-		public MainWindow()
-		{
-			InitializeComponent();
-
-			FenetreChampMines fenetreJeu = new FenetreChampMines(5, 5, 4);
-			gridPrincipale.Children.Add(fenetreJeu);
-		}
+    /// <summary>
+    /// Logique d'interaction pour MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private FenetreChampMines fenetreJeu;
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             FenetreConfiguration fenConfig = new FenetreConfiguration();
             fenConfig.ShowDialog();
         }
-	}
+
+        private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
+        {
+            gridPrincipale.Children.Remove(fenetreJeu);
+            fenetreJeu = new FenetreChampMines(5, 5, 4);
+            gridPrincipale.Children.Add(fenetreJeu);
+        }
+    }
 }

@@ -14,7 +14,7 @@ namespace Demineur
     public class Zone
     {
         // La taille, en pixel, d'une zone lors de l'affichage.
-        public static readonly int TAILLE_ZONE;
+        public static int TAILLE_ZONE;
 
         #region Attributs
 
@@ -28,16 +28,12 @@ namespace Demineur
         #endregion
 
 
-        static Zone()
-        {
-            TAILLE_ZONE = App.config.OptionUtilisateur.TailleCases;
-        }
-
         /// <summary>
         /// Constructeur de base de la classe Zone.
         /// </summary>
         public Zone()
         {
+            TAILLE_ZONE = App.config.OptionUtilisateur.TailleCases;
         }
 
         #region Méthodes

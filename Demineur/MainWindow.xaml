@@ -10,6 +10,7 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" IsMainMenu="True">
+            <MenuItem Name="btnNouvellePartie" Header="Nouvelle Partie" Click="btnNouvellePartie_Click" />
             <MenuItem Header="Configuration" Click="MenuItem_Click"/>
         </Menu>
         <Grid Grid.Row="1" Name="gridPrincipale">
