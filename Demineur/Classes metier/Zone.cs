@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 
 namespace Demineur
 {
@@ -15,15 +13,27 @@ namespace Demineur
     {
         // La taille, en pixel, d'une zone lors de l'affichage.
         public static int TAILLE_ZONE;
+        private int nbrMinesVoisins;
 
         #region Attributs
 
 
         public bool ContientMine { get; set; }
-
+        public int NbrMinesVoisins
+        {
+            get
+            {
+                return nbrMinesVoisins;
+            }
+            private set
+            {
+                if (value >= 0 && value <= 8)
+                    nbrMinesVoisins = value;
+                else
+                    throw new InvalidOperationException("La valeur de nbrMinesVoisins doit être entre 0 et 8");
+            }
+        }
         public ListeVoisin LstVoisins { get; private set; }
-
-        public Image ImageZone { get; private set; }
 
         #endregion
 
@@ -37,74 +47,6 @@ namespace Demineur
         }
 
         #region Méthodes
-
-        /// <summary>
-        /// Demande à la zone de vérifier son contenu et ses voisins et d'ajuster son image en conséquence.
-        /// </summary>
-        public void assignerImage()
-        {
-            // L'image de mine est tirée de http://doc.ubuntu-fr.org/gnomine.
-            ImageZone = new Image();
-            BitmapImage bImg;
-            int nbMines;
-
-            if (ContientMine)
-            {
-                bImg = new BitmapImage();
-                bImg.BeginInit();
-                bImg.UriSource = new Uri(@"Images\mine.png", UriKind.RelativeOrAbsolute);
-                bImg.DecodePixelWidth = TAILLE_ZONE * 10;
-                bImg.EndInit();
-
-                ImageZone.Source = bImg;
-            }
-            else
-            {
-                nbMines = compterMineVoisines();
-                if (nbMines != 0)
-                {
-                    bImg = new BitmapImage();
-                    bImg.BeginInit();
-                    bImg.DecodePixelWidth = TAILLE_ZONE * 10;  // Définir plus grand que requis?
-
-                    switch (nbMines)
-                    {
-                        case 1:
-                            bImg.UriSource = new Uri(@"Images\chiffre1.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 2:
-                            bImg.UriSource = new Uri(@"Images\chiffre2.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 3:
-                            bImg.UriSource = new Uri(@"Images\chiffre3.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 4:
-                            bImg.UriSource = new Uri(@"Images\chiffre4.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 5:
-                            bImg.UriSource = new Uri(@"Images\chiffre5.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 6:
-                            bImg.UriSource = new Uri(@"Images\chiffre6.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 7:
-                            bImg.UriSource = new Uri(@"Images\chiffre7.png", UriKind.RelativeOrAbsolute);
-                            break;
-                        case 8:
-                            bImg.UriSource = new Uri(@"Images\chiffre8.png", UriKind.RelativeOrAbsolute);
-                            break;
-                    }
-
-                    bImg.EndInit();
-                    ImageZone.Source = bImg;
-                }
-                else
-                {
-                    // Zone vide sans mine avoisinante = pas d'image.
-                    ImageZone.Source = null;
-                }
-            }
-        }
 
         /// <summary>
         /// Permet de compter le nombre de mines chez les voisins de la zone.
@@ -143,7 +85,10 @@ namespace Demineur
             LstVoisins = new ListeVoisin(voisinNO, voisinN, voisinNE, voisinO, voisinE, voisinSO, voisinS, voisinSE);
         }
 
-
+        public void assignerCompteur()
+        {
+            NbrMinesVoisins = compterMineVoisines();
+        }
 
         #endregion
 

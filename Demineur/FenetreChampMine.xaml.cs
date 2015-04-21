@@ -75,6 +75,76 @@ namespace Demineur
             }
         }
 
+
+        /// <summary>
+        /// DADASDFAFASFGASGASGSGSDGDemande à la zone de vérifier son contenu et ses voisins et d'ajuster son image en conséquence.
+        /// </summary>
+        private Image assignerImage(bool contientMine, int nbMines = 0)
+        {
+            Image imageZone;
+            // L'image de mine est tirée de http://doc.ubuntu-fr.org/gnomine.
+            imageZone = new Image();
+            BitmapImage bImg;
+            if (contientMine)
+            {
+                bImg = new BitmapImage();
+                bImg.BeginInit();
+                bImg.UriSource = new Uri(@"Images\mine.png", UriKind.RelativeOrAbsolute);
+                bImg.DecodePixelWidth = Zone.TAILLE_ZONE * 10;
+                bImg.EndInit();
+
+                imageZone.Source = bImg;
+            }
+            else
+            {
+                if (nbMines != 0)
+                {
+                    bImg = new BitmapImage();
+                    bImg.BeginInit();
+                    bImg.DecodePixelWidth = Zone.TAILLE_ZONE * 10;  // Définir plus grand que requis?
+
+                    switch (nbMines)
+                    {
+                        case 1:
+                            bImg.UriSource = new Uri(@"Images\chiffre1.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 2:
+                            bImg.UriSource = new Uri(@"Images\chiffre2.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 3:
+                            bImg.UriSource = new Uri(@"Images\chiffre3.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 4:
+                            bImg.UriSource = new Uri(@"Images\chiffre4.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 5:
+                            bImg.UriSource = new Uri(@"Images\chiffre5.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 6:
+                            bImg.UriSource = new Uri(@"Images\chiffre6.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 7:
+                            bImg.UriSource = new Uri(@"Images\chiffre7.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 8:
+                            bImg.UriSource = new Uri(@"Images\chiffre8.png", UriKind.RelativeOrAbsolute);
+                            break;
+                    }
+
+                    bImg.EndInit();
+                    imageZone.Source = bImg;
+                }
+                else
+                {
+                    // Zone vide sans mine avoisinante = pas d'image.
+                    imageZone.Source = null;
+                }
+
+            }
+            return imageZone;
+        }
+
+
         /// <summary>
         /// Affiche les images associées à chaque Zone de la grille de jeu à l'écran.
         /// </summary>
@@ -89,7 +159,7 @@ namespace Demineur
 
                 for (int j = 0; j <= colonne.Count - 1; j++)
                 {
-                    imgAffichage = colonne[j].ImageZone;
+                    imgAffichage = assignerImage(colonne[j].ContientMine, colonne[j].NbrMinesVoisins);
 
                     border = new Border();
                     border.BorderBrush = Brushes.Transparent;
@@ -301,5 +371,6 @@ namespace Demineur
             if (Terminer != null)
                 Terminer(JoueurMort);
         }
+
     }
 }

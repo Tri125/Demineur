@@ -42,7 +42,7 @@ namespace Demineur
 
             lierZones();
 
-            assignerImages();
+            assignerCompteurs();
         }
 
         /// <summary>
@@ -206,13 +206,13 @@ namespace Demineur
         /// <summary>
         /// Demande à chaque zone de mettre à jour son image selon son contenu.
         /// </summary>
-        private void assignerImages()
+        private void assignerCompteurs()
         {
             foreach (List<Zone> lz in LstZones)
             {
                 foreach (Zone z in lz)
                 {
-                    z.assignerImage();
+                    z.assignerCompteur();
                 }   
             }
         }
