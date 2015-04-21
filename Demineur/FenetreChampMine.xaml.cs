@@ -25,6 +25,8 @@ namespace Demineur
 
         private ChampMines Jeu { get; set; }
         private bool JoueurMort { get; set; }
+        private bool PartieTermine { get; set; }
+        private int nbrCasesRestantes;
 
         public FenetreChampMines(int largeur, int hauteur, int nbMines)
         {
@@ -32,6 +34,8 @@ namespace Demineur
 
             // Générer la structure du champ de mines.
             Jeu = new ChampMines(largeur, hauteur, nbMines);
+
+            nbrCasesRestantes = (largeur * hauteur) - nbMines;
 
             // Modifie la Grid pour correspondre au champ de mine du jeu.
             genererGrilleJeu();
@@ -145,7 +149,7 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!JoueurMort)
+            if (!PartieTermine)
             {
                 int column;
                 int row;
@@ -163,6 +167,7 @@ namespace Demineur
 
                 foreach (Zone z in ParcoursZone.ObtenirCaseVidePropager(Jeu.LstZones[column][row]))
                 {
+                    nbrCasesRestantes--;
                     int columnPropager = 0;
                     int rowPropager = 0;
                     ObtenirCoordGrille(z, ref rowPropager, ref columnPropager);
@@ -177,6 +182,10 @@ namespace Demineur
                     button.Visibility = Visibility.Hidden;
                     //ReveleBoutonCoord(rowPropager, columnPropager);
                     ReveleBordure(rowPropager, columnPropager);
+                    if (nbrCasesRestantes == 0)
+                    {
+                        Gagnee();
+                    }
                 }
 
                 if (Jeu.LstZones[column][row].ContientMine)
@@ -211,7 +220,7 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!JoueurMort)
+            if (!PartieTermine)
             {
                 btnSender = (Button)sender;
 
@@ -279,6 +288,7 @@ namespace Demineur
 
         private void Perdu()
         {
+            PartieTermine = true;
             JoueurMort = true;
             if (Terminer != null)
                 Terminer(JoueurMort);
@@ -286,6 +296,7 @@ namespace Demineur
 
         private void Gagnee()
         {
+            PartieTermine = true;
             JoueurMort = false;
             if (Terminer != null)
                 Terminer(JoueurMort);
