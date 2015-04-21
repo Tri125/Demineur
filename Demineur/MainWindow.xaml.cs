@@ -34,9 +34,40 @@ namespace Demineur
 
         private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
+            if (fenetreJeu != null)
+            {
+                fenetreJeu.Terminer -= new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+                DefautLabelJeu();
+            }
             gridPrincipale.Children.Remove(fenetreJeu);
             fenetreJeu = new FenetreChampMines(5, 5, 4);
+            fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
             gridPrincipale.Children.Add(fenetreJeu);
+        }
+
+        private void ChangeLabelJeu(object sender)
+        {
+            if (sender is bool)
+            {
+                bool joueurMort = (bool)sender;
+                if (joueurMort == true)
+                {
+                    lblPartie.Foreground = Brushes.Red;
+                    lblPartie.Content = "Partie Perdue";
+                }
+                else
+                    if (joueurMort == false)
+                    {
+                        lblPartie.Foreground = Brushes.Green;
+                        lblPartie.Content = "Partie Gagnée";
+                    }
+            }
+        }
+
+        private void DefautLabelJeu()
+        {
+            lblPartie.Foreground = Brushes.Black;
+            lblPartie.Content = "";
         }
     }
 }

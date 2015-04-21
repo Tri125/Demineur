@@ -20,8 +20,11 @@ namespace Demineur
     /// </summary>
     public partial class FenetreChampMines : UserControl
     {
+        public delegate void PartieTermineEventHandler(object sender);
+        public event PartieTermineEventHandler Terminer;
+
         private ChampMines Jeu { get; set; }
-        private bool PartieTermine { get; set; }
+        private bool JoueurMort { get; set; }
 
         public FenetreChampMines(int largeur, int hauteur, int nbMines)
         {
@@ -39,7 +42,7 @@ namespace Demineur
             // Couvre le premier niveau d'un second niveau - les éléments qui cachent le jeu.
             afficherCouverture();
 
-            PartieTermine = false;
+            JoueurMort = false;
         }
 
         /// <summary>
@@ -142,7 +145,7 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!PartieTermine)
+            if (!JoueurMort)
             {
                 int column;
                 int row;
@@ -167,7 +170,7 @@ namespace Demineur
                     .Cast<UIElement>()
                     .First(s => Grid.GetRow(s) == rowPropager && Grid.GetColumn(s) == columnPropager && Grid.GetZIndex(s) == 2);
                     Button button = (obj as Button);
-                    if((button.Content is StackPanel))
+                    if ((button.Content is StackPanel))
                     {
                         continue;
                     }
@@ -208,7 +211,7 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!PartieTermine)
+            if (!JoueurMort)
             {
                 btnSender = (Button)sender;
 
@@ -276,12 +279,16 @@ namespace Demineur
 
         private void Perdu()
         {
-            PartieTermine = true;
+            JoueurMort = true;
+            if (Terminer != null)
+                Terminer(JoueurMort);
         }
 
         private void Gagnee()
         {
-            PartieTermine = true;
+            JoueurMort = false;
+            if (Terminer != null)
+                Terminer(JoueurMort);
         }
     }
 }
