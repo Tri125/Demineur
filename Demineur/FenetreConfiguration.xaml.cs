@@ -29,7 +29,8 @@ namespace Demineur
 
         private void btnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            ConfigJoueur config = new ConfigJoueur(App.config.OptionUtilisateur.MinesCoins, App.config.OptionUtilisateur.TailleCases);
+            ConfigJoueur config = new ConfigJoueur(App.config.OptionUtilisateur.MinesCoins, App.config.OptionUtilisateur.TailleCases,
+                App.config.OptionUtilisateur.NombresMines, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.Largeur);
             App.config.EnregistrementUtilisateur(ref config);
         }
 

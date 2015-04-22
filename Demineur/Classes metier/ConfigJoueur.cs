@@ -9,21 +9,33 @@ using System.Xml.Serialization;
 
 namespace Demineur
 {
-	[Serializable]
-	public class ConfigJoueur
-	{
-		[XmlElement("Mines_de_coins")]
-		public bool MinesCoins { get; set; }
+    [Serializable]
+    public class ConfigJoueur
+    {
+        [XmlElement("Mines_de_coins")]
+        public bool MinesCoins { get; set; }
 
-		[XmlElement("Taille_des_cases")]
-		public int TailleCases { get; set; }
+        [XmlElement("Taille_des_cases")]
+        public int TailleCases { get; set; }
 
-		public ConfigJoueur() { }
+        [XmlElement("Nombre_de_mines")]
+        public int NombresMines { get; set; }
 
-		public ConfigJoueur(bool minesCoins, int tailleCases)
-		{
-			MinesCoins = minesCoins;
-			TailleCases = tailleCases;
-		}
-	}
+        [XmlElement("Hauteur_du_jeu")]
+        public int Hauteur { get; set; }
+
+        [XmlElement("Largeur_du_jeu")]
+        public int Largeur { get; set; }
+
+        public ConfigJoueur() { }
+
+        public ConfigJoueur(bool minesCoins, int tailleCases, int nbrMines, int hauteur, int largeur)
+        {
+            MinesCoins = minesCoins;
+            TailleCases = tailleCases;
+            NombresMines = nbrMines;
+            Hauteur = hauteur;
+            Largeur = largeur;
+        }
+    }
 }
