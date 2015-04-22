@@ -45,7 +45,7 @@ namespace Demineur
                 DefautLabelJeu();
             }
             gridPrincipale.Children.Remove(fenetreJeu);
-            fenetreJeu = new FenetreChampMines(5, 5, 4);
+            fenetreJeu = new FenetreChampMines(App.config.OptionUtilisateur.Largeur, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.NombresMines);
             fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
             gridPrincipale.Children.Add(fenetreJeu);
         }

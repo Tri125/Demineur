@@ -31,6 +31,9 @@ namespace Demineur
 
         private const bool MINES_DE_COINS = true;
         private const int TAILLE_DES_CASES = 20;
+        private const int HAUTEUR = 5;
+        private const int LARGEUR = 5;
+        private const int NOMBRE_DE_MINES = 4;
         #endregion
 
         public bool ChargementReussis { get { return chargementReussis; } }
@@ -56,6 +59,9 @@ namespace Demineur
         {
             this.optionUsine.MinesCoins = MINES_DE_COINS;
             this.optionUsine.TailleCases = TAILLE_DES_CASES;
+            this.optionUsine.Hauteur = HAUTEUR;
+            this.optionUsine.Largeur = LARGEUR;
+            this.optionUsine.NombresMines = NOMBRE_DE_MINES;
         }
 
         /// <summary>
