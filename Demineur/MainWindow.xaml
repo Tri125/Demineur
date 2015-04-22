@@ -12,8 +12,11 @@
         </Grid.RowDefinitions>
         <Label Name="lblPartie" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
         <Menu Grid.Row="0" IsMainMenu="True">
-            <MenuItem Name="btnNouvellePartie" Header="Nouvelle Partie" Click="btnNouvellePartie_Click" />
-            <MenuItem Header="Configuration" Click="MenuItem_Click"/>
+            <MenuItem Header="Jeu">
+                <MenuItem Name="btnPartieRapide" Header="Partie Rapide" Click="btnPartieRapide_Click" />
+                <MenuItem Name="btnNouvellePartie" Header="Nouvelle Partie" Click="btnNouvellePartie_Click"/>
+            </MenuItem>
+            <MenuItem Name="btnConfiguration" Header="Configuration" Click="btnConfiguration_Click"/>
         </Menu>
         <Grid Grid.Row="2" Name="gridPrincipale">
         </Grid>

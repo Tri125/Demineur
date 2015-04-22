@@ -26,13 +26,18 @@ namespace Demineur
             InitializeComponent();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnConfiguration_Click(object sender, RoutedEventArgs e)
         {
             FenetreConfiguration fenConfig = new FenetreConfiguration();
             fenConfig.ShowDialog();
         }
 
-        private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
+        private void btnPartieRapide_Click(object sender, RoutedEventArgs e)
         {
             if (fenetreJeu != null)
             {
@@ -69,5 +74,6 @@ namespace Demineur
             lblPartie.Foreground = Brushes.Black;
             lblPartie.Content = "";
         }
+
     }
 }
