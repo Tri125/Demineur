@@ -23,5 +23,22 @@ namespace Demineur
         {
             InitializeComponent();
         }
+
+        // http://stackoverflow.com/questions/5511/numeric-data-entry-in-wpf
+        private void txtNumeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !AreAllValidNumericChars(e.Text);
+        }
+
+        // http://stackoverflow.com/questions/5511/numeric-data-entry-in-wpf
+        private bool AreAllValidNumericChars(string str)
+        {
+            foreach (char c in str)
+            {
+                if (!Char.IsNumber(c)) return false;
+            }
+
+            return true;
+        }
     }
 }
