@@ -28,7 +28,8 @@ namespace Demineur
 
         private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
-
+            FenetreNouvellePartie fenPartie = new FenetreNouvellePartie();
+            fenPartie.ShowDialog();
         }
 
         private void btnConfiguration_Click(object sender, RoutedEventArgs e)
