@@ -22,6 +22,9 @@ namespace Demineur
         public FenetreNouvellePartie()
         {
             InitializeComponent();
+            DataObject.AddPastingHandler(txtHauteur, new DataObjectPastingEventHandler(OnPaste));
+            DataObject.AddPastingHandler(txtLargeur, new DataObjectPastingEventHandler(OnPaste));
+            DataObject.AddPastingHandler(txtMines, new DataObjectPastingEventHandler(OnPaste));
         }
 
         // http://stackoverflow.com/questions/5511/numeric-data-entry-in-wpf
@@ -40,5 +43,27 @@ namespace Demineur
 
             return true;
         }
+
+        private void txtNumeric_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+
+        // http://stackoverflow.com/questions/3061475/paste-event-in-a-wpf-textbox
+        private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            bool isText = e.SourceDataObject.GetDataPresent(System.Windows.DataFormats.Text, true);
+            if (!isText) return;
+
+            string text = e.SourceDataObject.GetData(DataFormats.Text) as string;
+            if (!AreAllValidNumericChars(text))
+            {
+                e.CancelCommand();
+            }
+        }
+
     }
 }

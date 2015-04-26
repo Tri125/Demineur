@@ -13,11 +13,11 @@
         <GroupBox Header="Paramètres de jeu" IsEnabled="{Binding ElementName=rdPerso, Path=IsChecked}" HorizontalAlignment="Left" Margin="45,118,0,0" VerticalAlignment="Top" Height="142" Width="205">
             <Grid>
                 <Label Content="Largeur de la grille : " HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top"/>
-                <TextBox Name="txtLargeur"  PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="15" TextAlignment="Center" VerticalAlignment="Top" Margin="137,8,0,0" Width="44" Height="24"/>
+                <TextBox Name="txtLargeur" PreviewKeyDown="txtNumeric_PreviewKeyDown"  PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="15" TextAlignment="Center" VerticalAlignment="Top" Margin="137,8,0,0" Width="44" Height="24"/>
                 <Label Content="Hauteur de la grille : " HorizontalAlignment="Left" Margin="12,47,0,0" VerticalAlignment="Top"/>
-                <TextBox Name="txtHauteur" PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="15" TextAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="0.642,1.455" Margin="137,49,0,0" Width="44" Height="22"/>
+                <TextBox Name="txtHauteur" PreviewKeyDown="txtNumeric_PreviewKeyDown" PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="15" TextAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="0.642,1.455" Margin="137,49,0,0" Width="44" Height="22"/>
                 <Label Content="Nombre de mines : " HorizontalAlignment="Left" Margin="11,86,0,0" VerticalAlignment="Top"/>
-                <TextBox Name="txtMines" PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="4" TextAlignment="Center" VerticalAlignment="Top" Margin="137,88,0,0" Width="44"/>
+                <TextBox Name="txtMines" PreviewKeyDown="txtNumeric_PreviewKeyDown" PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="4" TextAlignment="Center" VerticalAlignment="Top" Margin="137,88,0,0" Width="44"/>
             </Grid>
         </GroupBox>
     </Grid>
