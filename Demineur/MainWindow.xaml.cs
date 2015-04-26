@@ -30,6 +30,10 @@ namespace Demineur
         {
             FenetreNouvellePartie fenPartie = new FenetreNouvellePartie();
             fenPartie.ShowDialog();
+            int largeur = fenPartie.Largeur;
+            int hauteur = fenPartie.Hauteur;
+            int nbrMines = fenPartie.NbrMines;
+            NouvellePartie(largeur, hauteur, nbrMines);
         }
 
         private void btnConfiguration_Click(object sender, RoutedEventArgs e)
@@ -38,7 +42,7 @@ namespace Demineur
             fenConfig.ShowDialog();
         }
 
-        private void btnPartieRapide_Click(object sender, RoutedEventArgs e)
+        private void NouvellePartie(int largeur, int hauteur, int nbrMines)
         {
             if (fenetreJeu != null)
             {
@@ -46,9 +50,14 @@ namespace Demineur
                 DefautLabelJeu();
             }
             gridPrincipale.Children.Remove(fenetreJeu);
-            fenetreJeu = new FenetreChampMines(App.config.OptionUtilisateur.Largeur, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.NombresMines);
+            fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines);
             fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
             gridPrincipale.Children.Add(fenetreJeu);
+        }
+
+        private void btnPartieRapide_Click(object sender, RoutedEventArgs e)
+        {
+            NouvellePartie(App.config.OptionUtilisateur.Largeur, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.NombresMines);
         }
 
         private void ChangeLabelJeu(object sender)

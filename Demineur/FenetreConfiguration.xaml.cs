@@ -57,10 +57,5 @@ namespace Demineur
                 }
             }
         }
-
-        private void btnFermer_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
     }
 }

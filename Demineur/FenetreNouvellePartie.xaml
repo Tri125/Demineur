@@ -5,8 +5,8 @@
     <Grid>
         <GroupBox Header="Niveau" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Height="142" Width="205">
             <Grid>
-                <RadioButton Content="Débutant" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,15,0,0" ToolTip="5x5 - 5 mines"/>
-                <RadioButton Content="Avancé" Margin="12,52,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="15x15 - 60 mines"/>
+                <RadioButton Name="rdDebutant" Content="Débutant" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,15,0,0" ToolTip="5x5 - 5 mines"/>
+                <RadioButton Name="rdAvance" Content="Avancé" Margin="12,52,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="15x15 - 60 mines"/>
                 <RadioButton Name="rdPerso" Content="Personnalisé" Margin="11,91,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
@@ -20,7 +20,7 @@
                 <TextBox Name="txtMines" PreviewKeyDown="txtNumeric_PreviewKeyDown" PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="4" TextAlignment="Center" VerticalAlignment="Top" Margin="137,88,0,0" Width="44"/>
             </Grid>
         </GroupBox>
-        <Button Content="Jouer" HorizontalAlignment="Left" Margin="120,166,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button Content="Annuler" HorizontalAlignment="Left" Margin="220,166,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button IsDefault="True" Name="btnJouer" Content="Jouer" HorizontalAlignment="Left" Margin="120,166,0,0" VerticalAlignment="Top" Width="75" Click="btnJouer_Click"/>
+        <Button IsCancel="True" Name="btnAnnuler" Content="Annuler" HorizontalAlignment="Left" Margin="220,166,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>
