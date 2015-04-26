@@ -74,6 +74,7 @@ namespace Demineur
 
         private void btnJouer_Click(object sender, RoutedEventArgs e)
         {
+            DialogResult = true;
             if (rdDebutant.IsChecked == true)
             {
                 Largeur = 5;

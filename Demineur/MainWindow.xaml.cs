@@ -29,11 +29,13 @@ namespace Demineur
         private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
             FenetreNouvellePartie fenPartie = new FenetreNouvellePartie();
-            fenPartie.ShowDialog();
-            int largeur = fenPartie.Largeur;
-            int hauteur = fenPartie.Hauteur;
-            int nbrMines = fenPartie.NbrMines;
-            NouvellePartie(largeur, hauteur, nbrMines);
+            if (fenPartie.ShowDialog().Value)
+            {
+                int largeur = fenPartie.Largeur;
+                int hauteur = fenPartie.Hauteur;
+                int nbrMines = fenPartie.NbrMines;
+                NouvellePartie(largeur, hauteur, nbrMines);
+            }
         }
 
         private void btnConfiguration_Click(object sender, RoutedEventArgs e)
