@@ -29,6 +29,7 @@ namespace Demineur
         private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
             FenetreNouvellePartie fenPartie = new FenetreNouvellePartie();
+            //DialogResult
             if (fenPartie.ShowDialog().Value)
             {
                 int largeur = fenPartie.Largeur;
