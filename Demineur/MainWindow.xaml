@@ -18,7 +18,9 @@
             </MenuItem>
             <MenuItem Name="btnConfiguration" Header="Configuration" Click="btnConfiguration_Click"/>
         </Menu>
-        <Grid Grid.Row="2" Name="gridPrincipale">
-        </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="2">
+            <Grid Name="gridPrincipale">
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Window>
