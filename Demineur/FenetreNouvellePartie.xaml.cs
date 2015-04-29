@@ -19,64 +19,30 @@ namespace Demineur
     /// </summary>
     public partial class FenetreNouvellePartie : Window
     {
-        private int largeur;
-        private int hauteur;
-        private int nbrMines;
+        public int Largeur { get; set; }
+        public int Hauteur { get; set; }
+        public int NbrMines { get; set; }
 
         public FenetreNouvellePartie()
         {
+       
             InitializeComponent();
             DataObject.AddPastingHandler(txtHauteur, new DataObjectPastingEventHandler(OnPaste));
             DataObject.AddPastingHandler(txtLargeur, new DataObjectPastingEventHandler(OnPaste));
             DataObject.AddPastingHandler(txtMines, new DataObjectPastingEventHandler(OnPaste));
+
+            txtHauteur.TextChanged += new TextChangedEventHandler(txtNumeric_TextChanged);
+            txtLargeur.TextChanged += new TextChangedEventHandler(txtNumeric_TextChanged);
+            txtMines.TextChanged += new TextChangedEventHandler(txtNumeric_TextChanged);
+
+            //Présent dans le code et non dans la fenêtre sinon s'inscris à l'évènement avant l'instantiation des contrôles et les fonctions modifies un contrôle.
+            rdDebutant.Checked += new RoutedEventHandler(rdDebutant_Checked);
+            rdAvance.Checked += new RoutedEventHandler(rdAvance_Checked);
+            rdPerso.Checked += new RoutedEventHandler(rdPerso_Checked);
+
             txtHauteur.Text = App.config.OptionUtilisateur.Hauteur.ToString();
             txtLargeur.Text = App.config.OptionUtilisateur.Largeur.ToString();
             txtMines.Text = App.config.OptionUtilisateur.NombresMines.ToString();
-        }
-
-        public int Largeur
-        {
-            get
-            {
-                return largeur;
-            }
-            set
-            {
-                if (value <= 0 || value > 50)
-                {
-                    value = 15;
-                }
-                largeur = value;
-            }
-        }
-        public int Hauteur
-        {
-            get
-            {
-                return hauteur;
-            }
-            set
-            {
-                if (value <= 0 || value > 30)
-                {
-                    value = 15;
-                }
-                hauteur = value;
-            }
-        }
-
-        public int NbrMines
-        {
-            get
-            {
-                return nbrMines;
-            }
-            set
-            {
-                if (value <= 0)
-                    value = 60;
-                nbrMines = value;
-            }
         }
 
         // http://stackoverflow.com/questions/5511/numeric-data-entry-in-wpf
@@ -119,13 +85,12 @@ namespace Demineur
 
         private void btnJouer_Click(object sender, RoutedEventArgs e)
         {
-            bool valid = true;
+            DialogResult = true;
             if (rdDebutant.IsChecked == true)
             {
                 Largeur = 5;
                 Hauteur = 5;
                 NbrMines = 5;
-                DialogResult = true;
             }
             else
                 if (rdAvance.IsChecked == true)
@@ -133,62 +98,74 @@ namespace Demineur
                     Largeur = 15;
                     Hauteur = 15;
                     NbrMines = 60;
-                    DialogResult = true;
                 }
                 else
                     if (rdPerso.IsChecked == true)
                     {
-                        valid = IsValidParametrePerso();
+                        Largeur = int.Parse(txtLargeur.Text);
+                        Hauteur = int.Parse(txtHauteur.Text);
+                        NbrMines = int.Parse(txtMines.Text);
+                        ConfigJoueur config = new ConfigJoueur(App.config.OptionUtilisateur.MinesCoins, App.config.OptionUtilisateur.TailleCases,
+                        NbrMines, Hauteur, Largeur);
+                        App.config.EnregistrementUtilisateur(ref config);
                     }
-            if (valid)
-                this.Close();
+            this.Close();
         }
 
         private bool IsValidParametrePerso()
         {
-            if (txtHauteur != null && txtLargeur != null && txtMines != null)
+            int largeur;
+            if (!int.TryParse(txtLargeur.Text, out largeur))
             {
-                int largeur;
-                if (!int.TryParse(txtLargeur.Text, out largeur))
-                {
-                    largeur = 0;
-                }
-
-                int hauteur;
-                if (!int.TryParse(txtHauteur.Text, out hauteur))
-                {
-                    hauteur = 0;
-                }
-
-                int nbrMines;
-                if (!int.TryParse(txtMines.Text, out nbrMines))
-                {
-                    nbrMines = 0;
-                }
-
-                if (largeur <= 0 || hauteur <= 0 || nbrMines < 0 || (largeur * hauteur) < 2 || largeur > 50 || hauteur > 30 || (nbrMines > (largeur * hauteur)))
-                {
-                    return false;
-                }
-                return true;
+                largeur = 0;
             }
-            return false;
+
+            int hauteur;
+            if (!int.TryParse(txtHauteur.Text, out hauteur))
+            {
+                hauteur = 0;
+            }
+
+            int nbrMines;
+            if (!int.TryParse(txtMines.Text, out nbrMines))
+            {
+                nbrMines = 0;
+            }
+
+            if (largeur <= 0 || hauteur <= 0 || nbrMines < 0 || (largeur * hauteur) < 4 || largeur > 50 || hauteur > 30 || (nbrMines > (largeur * hauteur)))
+            {
+                return false;
+            }
+            return true;
         }
 
         private void txtNumeric_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (btnJouer != null)
+            if (!IsValidParametrePerso())
             {
-                if (!IsValidParametrePerso())
-                {
-                    btnJouer.IsEnabled = false;
-                }
-                else
-                {
-                    btnJouer.IsEnabled = true;
-                }
+                btnJouer.IsEnabled = false;
+            }
+            else
+            {
+                btnJouer.IsEnabled = true;
             }
         }
+
+        private void rdDebutant_Checked(object sender, RoutedEventArgs e)
+        {
+            btnJouer.IsEnabled = true;
+        }
+
+        private void rdAvance_Checked(object sender, RoutedEventArgs e)
+        {
+            btnJouer.IsEnabled = true;
+        }
+
+        private void rdPerso_Checked(object sender, RoutedEventArgs e)
+        {
+            btnJouer.IsEnabled = IsValidParametrePerso();
+        }
+
 
     }
 }
