@@ -56,6 +56,11 @@ namespace Demineur
             fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines);
             fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
             gridPrincipale.Children.Add(fenetreJeu);
+
+            UCIndicateurMine indicateurMine = new UCIndicateurMine(nbrMines);
+
+            Grid.SetRow(indicateurMine, 3);
+            grdStat.Children.Add(indicateurMine);
         }
 
         private void btnPartieRapide_Click(object sender, RoutedEventArgs e)

@@ -9,6 +9,7 @@
             <RowDefinition Height="*"></RowDefinition>
             <!-- Row contenant le reste des contrôles -->
             <RowDefinition Height="6*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Name="lblPartie" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
         <Menu Grid.Row="0" IsMainMenu="True">
@@ -18,9 +19,10 @@
             </MenuItem>
             <MenuItem Name="btnConfiguration" Header="Configuration" Click="btnConfiguration_Click"/>
         </Menu>
-        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="2">
+        <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Center" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="2">
             <Grid Name="gridPrincipale">
             </Grid>
         </ScrollViewer>
+        <Grid Name="grdStat" Grid.Row="3" />
     </Grid>
 </Window>
