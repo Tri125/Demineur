@@ -26,7 +26,7 @@ namespace Demineur
             {
                 Zone courant = recherche.Pop();
                 //etatVisite[courant] = EtatVisite.visited;
-                if (courant.compterMineVoisines() != 0 || courant.ContientMine == true)
+                if (courant.NbrMinesVoisins != 0 || courant.ContientMine == true)
                 {
                     continue;
 

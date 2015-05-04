@@ -52,7 +52,7 @@ namespace Demineur
         /// Permet de compter le nombre de mines chez les voisins de la zone.
         /// </summary>
         /// <returns>Une valeur entre 0 et n, n étant égal au nombre de voisins de la case.</returns>
-        public int compterMineVoisines()
+        private int compterMineVoisines()
         {
             int nbMines = 0;
 
