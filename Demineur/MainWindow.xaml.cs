@@ -50,11 +50,13 @@ namespace Demineur
             if (fenetreJeu != null)
             {
                 fenetreJeu.Terminer -= new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+                fenetreJeu.Drapeau -= new FenetreChampMines.DrapeauEventHandler(OnChangementDrapeau);
                 DefautLabelJeu();
             }
             gridPrincipale.Children.Remove(fenetreJeu);
             fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines);
             fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+            fenetreJeu.Drapeau += new FenetreChampMines.DrapeauEventHandler(OnChangementDrapeau);
             gridPrincipale.Children.Add(fenetreJeu);
             indicateurMine.SetMineCount(nbrMines);
             indicateurMine.Visibility = System.Windows.Visibility.Visible;
@@ -88,6 +90,28 @@ namespace Demineur
         {
             lblPartie.Foreground = Brushes.Black;
             lblPartie.Content = "";
+        }
+
+        private void RetraitDrapeau()
+        {
+            indicateurMine.IncrementeMine();
+        }
+
+        private void RajoutDrapeau()
+        {
+            indicateurMine.DecrementeMine();
+        }
+
+        private void OnChangementDrapeau(object sender, FenetreChampMines.DrapeauEventArgs e)
+        {
+            if (e == FenetreChampMines.DrapeauEventArgs.Rajout)
+            {
+                RajoutDrapeau();
+            }
+            else if (e == FenetreChampMines.DrapeauEventArgs.Retrait)
+            {
+                RetraitDrapeau();
+            }
         }
 
     }

@@ -23,6 +23,17 @@ namespace Demineur
         public delegate void PartieTermineEventHandler(object sender);
         public event PartieTermineEventHandler Terminer;
 
+        public delegate void DrapeauEventHandler(object sender, DrapeauEventArgs e);
+        public event DrapeauEventHandler Drapeau;
+
+        public class DrapeauEventArgs : EventArgs
+        {
+            private DrapeauEventArgs() { }
+
+            public static readonly DrapeauEventArgs Rajout = new DrapeauEventArgs();
+            public static readonly DrapeauEventArgs Retrait = new DrapeauEventArgs();
+        }
+
         private ChampMines Jeu { get; set; }
         private bool JoueurMort { get; set; }
         private bool PartieTermine { get; set; }
@@ -299,6 +310,7 @@ namespace Demineur
                 if ((btnSender.Content is StackPanel))
                 {
                     btnSender.Content = null;
+                    ChangementDrapeau(false);
                 }
                 else
                 {
@@ -316,6 +328,7 @@ namespace Demineur
                     sp.Children.Add(img);
 
                     btnSender.Content = sp;
+                    ChangementDrapeau(true);
                 }
             }
 
@@ -370,6 +383,19 @@ namespace Demineur
             JoueurMort = false;
             if (Terminer != null)
                 Terminer(JoueurMort);
+        }
+
+        private void ChangementDrapeau(bool rajout)
+        {
+            if (Drapeau != null)
+            {
+                if (rajout)
+                    Drapeau(this, DrapeauEventArgs.Rajout);
+                else
+                    Drapeau(this, DrapeauEventArgs.Retrait);
+
+            }
+
         }
 
     }
