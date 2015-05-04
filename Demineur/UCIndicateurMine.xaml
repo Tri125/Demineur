@@ -10,7 +10,7 @@
             <Ellipse Fill="Black" Height="300" Width="300"/>
             <Ellipse Fill="White"  Height="250" Width="250"/>
             <Image Source="Images\mine.png" Width="250" Height="250"/>
-            <Ellipse Fill="White" Height="130" Width="130" />
+            <Ellipse Name="elliCentre" Fill="Transparent" Height="130" Width="130" />
             <Label Name="lblNbrMines" Content="100" FontSize="60" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
     </Viewbox>

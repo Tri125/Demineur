@@ -39,6 +39,7 @@ namespace Demineur
         {
             Compteur = i;
             lblNbrMines.Content = Compteur;
+            elliCentre.Fill = Brushes.Transparent;
         }
 
         public void DecrementeMine()
@@ -46,11 +47,18 @@ namespace Demineur
             if (Compteur > 0)
                 lblNbrMines.Content = --Compteur;
             else
+            {
+                elliCentre.Fill = Brushes.Red;
                 Compteur--;
+            }
         }
 
         public void IncrementeMine()
         {
+            if (Compteur == -1)
+            {
+                elliCentre.Fill = Brushes.Transparent;
+            }
             if (Compteur >= 0)
                 lblNbrMines.Content = ++Compteur;
             else
