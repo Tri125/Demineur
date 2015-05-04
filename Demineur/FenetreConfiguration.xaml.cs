@@ -32,6 +32,7 @@ namespace Demineur
             ConfigJoueur config = new ConfigJoueur(App.config.OptionUtilisateur.MinesCoins, App.config.OptionUtilisateur.TailleCases,
                 App.config.OptionUtilisateur.NombresMines, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.Largeur);
             App.config.EnregistrementUtilisateur(ref config);
+            this.Close();
         }
 
         private void sTaille_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
