@@ -182,8 +182,11 @@ namespace Demineur
                     Grid.SetZIndex(border, 1);
                     border.Child = imgAffichage;
                     grdChampMine.Children.Add(border);
-                    border.Background = Brushes.Transparent;
-					border.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
+                    if (imgAffichage.Source == null)
+                    {
+                        border.Background = Brushes.Transparent;
+                        border.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
+                    }
                 }
             }
 
