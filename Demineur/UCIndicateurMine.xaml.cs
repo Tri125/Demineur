@@ -21,6 +21,8 @@ namespace Demineur
     public partial class UCIndicateurMine : UserControl
     {
 
+        private int Compteur { get; set; }
+
         public UCIndicateurMine()
         {
             InitializeComponent();
@@ -29,38 +31,30 @@ namespace Demineur
         public UCIndicateurMine(int nbrMines)
             : this()
         {
-            lblNbrMines.Content = nbrMines;
+            Compteur = nbrMines;
+            lblNbrMines.Content = Compteur;
         }
 
         public void SetMineCount(int i)
         {
-            lblNbrMines.Content = i;
+            Compteur = i;
+            lblNbrMines.Content = Compteur;
         }
 
         public void DecrementeMine()
         {
-            int tmp;
-            bool result;
-            result = int.TryParse(lblNbrMines.Content.ToString(), out tmp);
-            if (result && tmp > 0)
-            {
-                lblNbrMines.Content = --tmp;
-            }
-            else if (!result)
-                lblNbrMines.Content = 0;
+            if (Compteur > 0)
+                lblNbrMines.Content = --Compteur;
+            else
+                Compteur--;
         }
 
         public void IncrementeMine()
         {
-            int tmp;
-            bool result;
-            result = int.TryParse(lblNbrMines.Content.ToString(), out tmp);
-            if (result)
-            {
-                lblNbrMines.Content = ++tmp;
-            }
+            if (Compteur >= 0)
+                lblNbrMines.Content = ++Compteur;
             else
-                lblNbrMines.Content = 0;
+                Compteur++;
         }
     }
 }
