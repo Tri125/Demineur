@@ -184,11 +184,9 @@ namespace Demineur
                     Grid.SetZIndex(border, 1);
                     border.Child = imgAffichage;
                     grdChampMine.Children.Add(border);
-                    if (imgAffichage.Source == null)
-                    {
-                        border.Background = Brushes.Transparent;
-                        border.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
-                    }
+
+                    border.Background = Brushes.Transparent;
+                    border.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
                 }
             }
 
@@ -229,9 +227,47 @@ namespace Demineur
 
         private void btnCouverture_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("IN");
-            if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
-                Console.WriteLine("Double");
+            if (!PartieTermine)
+            {
+                Console.WriteLine("IN");
+                if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
+                {
+                    Console.WriteLine("Double");
+                    if (sender is Border)
+                    {
+                        Border b = sender as Border;
+                        int column = Grid.GetColumn(b);
+                        int row = Grid.GetRow(b);
+                        Console.WriteLine("Column : " + column + " Row : " + row);
+                        int nbrDrapeau = 0;
+                        int nbrMines = 0;
+                        List<Button> btnList = new List<Button>();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Zone courant = Jeu.LstZones[column][row].LstVoisins[i];
+                            if (courant == null)
+                                continue;
+                            if (courant.ContientMine)
+                                nbrMines++;
+                            int tmpRow = 0;
+                            int tmpColumn = 0;
+                            ObtenirCoordGrille(courant, ref tmpRow, ref tmpColumn);
+                            Button btn = buttonFromCoord(tmpColumn, tmpRow);
+                            if (btn.Content is StackPanel)
+                                nbrDrapeau++;
+                            btnList.Add(btn);
+                        }
+
+                        if (nbrDrapeau == nbrMines)
+                        {
+                            foreach (Button btn in btnList)
+                            {
+                                ActivateButton(btn);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -268,6 +304,8 @@ namespace Demineur
             {
                 return;
             }
+            if (btnSender.Visibility == System.Windows.Visibility.Hidden)
+                return;
             nbrCasesRestantes--;
             btnSender.Visibility = Visibility.Hidden;
 
