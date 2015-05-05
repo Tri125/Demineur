@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Demineur
 {
@@ -225,12 +224,12 @@ namespace Demineur
             }
         }
 
-		private void btnCouverture_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-			Console.WriteLine("IN");
-			if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
-				Console.WriteLine("Double");
-		}
+        private void btnCouverture_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("IN");
+            if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
+                Console.WriteLine("Double");
+        }
 
         /// <summary>
         /// Gestion des cliques gauches sur les boutons de couverture.
@@ -240,66 +239,78 @@ namespace Demineur
         /// <param name="e"></param>
         private void btnCouverture_Click(object sender, RoutedEventArgs e)
         {
-            Button btnSender;
-
             if (!PartieTermine)
             {
-                int column;
-                int row;
-                btnSender = (Button)sender;
+                if (sender is Button)
+                    ActivateButton(sender as Button);
+            }
+        }
 
-                // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
-                // la présence de ce type de "content" signifie qu'il y a une image.
-                if ((btnSender.Content is StackPanel))
+        private Button buttonFromCoord(int column, int row)
+        {
+            Object bouton = grdChampMine.Children
+            .Cast<UIElement>()
+            .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
+            return (bouton as Button);
+        }
+
+        private void ActivateButton(Button btnSender)
+        {
+            int column;
+            int row;
+
+            // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
+            // la présence de ce type de "content" signifie qu'il y a une image.
+            if ((btnSender.Content is StackPanel))
+            {
+                return;
+            }
+            nbrCasesRestantes--;
+            btnSender.Visibility = Visibility.Hidden;
+
+            column = Grid.GetColumn(btnSender);
+            row = Grid.GetRow(btnSender);
+
+            if ((Jeu.LstZones[column][row].NbrMinesVoisins == 0 && !Jeu.LstZones[column][row].ContientMine))
+            {
+                for (int i = 0; i < 8; i++)
                 {
-                    return;
-                }
-
-                column = Grid.GetColumn(btnSender);
-                row = Grid.GetRow(btnSender);
-
-                foreach (Zone z in ParcoursZone.ObtenirCaseVidePropager(Jeu.LstZones[column][row]))
-                {
-                    nbrCasesRestantes--;
-                    int columnPropager = 0;
-                    int rowPropager = 0;
-                    ObtenirCoordGrille(z, ref rowPropager, ref columnPropager);
-                    Object obj = grdChampMine.Children
-                    .Cast<UIElement>()
-                    .First(s => Grid.GetRow(s) == rowPropager && Grid.GetColumn(s) == columnPropager && Grid.GetZIndex(s) == 2);
-                    Button button = (obj as Button);
-                    if ((button.Content is StackPanel))
+                    if (Jeu.LstZones[column][row].LstVoisins[i] != null)
                     {
-                        continue;
-                    }
-                    button.Visibility = Visibility.Hidden;
-                    //ReveleBoutonCoord(rowPropager, columnPropager);
-                    ReveleBordure(rowPropager, columnPropager);
-                    if (nbrCasesRestantes == 0)
-                    {
-                        Gagnee();
+                        int zRow = 0;
+                        int zColumn = 0;
+                        ObtenirCoordGrille(Jeu.LstZones[column][row].LstVoisins[i], ref zRow, ref zColumn);
+                        Button btn = buttonFromCoord(zColumn, zRow);
+                        if (btn.IsVisible)
+                            ActivateButton(btn);
                     }
                 }
+            }
+            ReveleBordure(row, column);
+            if (nbrCasesRestantes == 0)
+            {
+                Gagnee();
+            }
 
-                if (Jeu.LstZones[column][row].ContientMine)
-                {
-                    Image imgBombe = new Image();
-                    BitmapImage bImg = new BitmapImage();
-                    bImg.BeginInit();
-                    bImg.UriSource = new Uri(@"Images\mine_explosion.png", UriKind.RelativeOrAbsolute);
-                    bImg.DecodePixelWidth = Zone.TAILLE_ZONE;
-                    bImg.EndInit();
-                    imgBombe.Source = bImg;
 
-                    Grid.SetColumn(imgBombe, Grid.GetColumn(btnSender));
-                    Grid.SetRow(imgBombe, Grid.GetRow(btnSender));
-                    // Afficher la bombe par dessus l'autre.
-                    Grid.SetZIndex(imgBombe, 2);
+            if (Jeu.LstZones[column][row].ContientMine)
+            {
+                Image imgBombe = new Image();
+                BitmapImage bImg = new BitmapImage();
+                bImg.BeginInit();
+                bImg.UriSource = new Uri(@"Images\mine_explosion.png", UriKind.RelativeOrAbsolute);
+                bImg.DecodePixelWidth = Zone.TAILLE_ZONE;
+                bImg.EndInit();
+                imgBombe.Source = bImg;
 
-                    grdChampMine.Children.Add(imgBombe);
+                Grid.SetColumn(imgBombe, Grid.GetColumn(btnSender));
+                Grid.SetRow(imgBombe, Grid.GetRow(btnSender));
+                // Afficher la bombe par dessus l'autre.
+                Grid.SetZIndex(imgBombe, 2);
 
-                    Perdu();
-                }
+                grdChampMine.Children.Add(imgBombe);
+
+                Perdu();
             }
         }
 
@@ -351,7 +362,7 @@ namespace Demineur
             //http://stackoverflow.com/questions/1511722/how-to-programmatically-access-control-in-wpf-grid-by-row-and-column-index
             Object border = grdChampMine.Children
                 .Cast<UIElement>()
-                .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column);
+                .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 1);
             if (border is Border)
             {
                 (border as Border).BorderBrush = Brushes.Black;
@@ -372,14 +383,6 @@ namespace Demineur
                 }
             }
         }
-
-        //private void ReveleBoutonCoord(int row, int column)
-        //{
-        //    Object bouton = grdChampMine.Children
-        //    .Cast<UIElement>()
-        //    .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
-        //    (bouton as Button).Visibility = Visibility.Hidden;
-        //}
 
         private void Perdu()
         {
