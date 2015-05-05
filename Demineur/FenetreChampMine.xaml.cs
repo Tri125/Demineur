@@ -284,7 +284,7 @@ namespace Demineur
                         int zColumn = 0;
                         ObtenirCoordGrille(Jeu.LstZones[column][row].LstVoisins[i], ref zRow, ref zColumn);
                         Button btn = buttonFromCoord(zColumn, zRow);
-                        if (btn.IsVisible)
+                        if (btn.Visibility == System.Windows.Visibility.Visible)
                             ActivateButton(btn);
                     }
                 }
@@ -416,13 +416,6 @@ namespace Demineur
 
         }
 
-        private void ReveleBoutonCoord(int row, int column)
-        {
-            Object bouton = grdChampMine.Children
-            .Cast<UIElement>()
-            .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
-            (bouton as Button).Visibility = Visibility.Hidden;
-        }
 
         private void ReveleCoins()
         {
@@ -434,8 +427,7 @@ namespace Demineur
 
             foreach (Tuple<int, int> coord in listCoord)
             {
-                ReveleBoutonCoord(coord.Item1, coord.Item2);
-                ReveleBordure(coord.Item1, coord.Item2);
+                ActivateButton(buttonFromCoord(coord.Item1, coord.Item2));
             }
 
         }
