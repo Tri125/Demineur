@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Demineur
 {
@@ -20,8 +19,24 @@ namespace Demineur
     /// </summary>
     public partial class FenetreChampMines : UserControl
     {
+        public delegate void PartieTermineEventHandler(object sender);
+        public event PartieTermineEventHandler Terminer;
+
+        public delegate void DrapeauEventHandler(object sender, DrapeauEventArgs e);
+        public event DrapeauEventHandler Drapeau;
+
+        public class DrapeauEventArgs : EventArgs
+        {
+            private DrapeauEventArgs() { }
+
+            public static readonly DrapeauEventArgs Rajout = new DrapeauEventArgs();
+            public static readonly DrapeauEventArgs Retrait = new DrapeauEventArgs();
+        }
+
         private ChampMines Jeu { get; set; }
         private bool JoueurMort { get; set; }
+        private bool PartieTermine { get; set; }
+        private int nbrCasesRestantes;
 
         public FenetreChampMines(int largeur, int hauteur, int nbMines)
         {
@@ -30,16 +45,21 @@ namespace Demineur
             // Générer la structure du champ de mines.
             Jeu = new ChampMines(largeur, hauteur, nbMines);
 
+            nbrCasesRestantes = (largeur * hauteur) - nbMines;
+
             // Modifie la Grid pour correspondre au champ de mine du jeu.
             genererGrilleJeu();
 
             // Affiche le premier niveau - les mines et les chiffres.
             afficherZones();
-                        
+
             // Couvre le premier niveau d'un second niveau - les éléments qui cachent le jeu.
             afficherCouverture();
 
             JoueurMort = false;
+
+            if (!App.config.OptionUtilisateur.MinesCoins)
+                ReveleCoins();
         }
 
         /// <summary>
@@ -50,7 +70,7 @@ namespace Demineur
         {
             ColumnDefinition colDefinition;
             RowDefinition rowDefinition;
-            
+
             // Définir les colonnes et rangées de la Grid.
             for (int i = 0; i < Jeu.LargeurChampMine; i++)
             {
@@ -68,6 +88,76 @@ namespace Demineur
             }
         }
 
+
+        /// <summary>
+        /// DADASDFAFASFGASGASGSGSDGDemande à la zone de vérifier son contenu et ses voisins et d'ajuster son image en conséquence.
+        /// </summary>
+        private Image assignerImage(bool contientMine, int nbMines = 0)
+        {
+            Image imageZone;
+            // L'image de mine est tirée de http://doc.ubuntu-fr.org/gnomine.
+            imageZone = new Image();
+            BitmapImage bImg;
+            if (contientMine)
+            {
+                bImg = new BitmapImage();
+                bImg.BeginInit();
+                bImg.UriSource = new Uri(@"Images\mine.png", UriKind.RelativeOrAbsolute);
+                bImg.DecodePixelWidth = Zone.TAILLE_ZONE * 10;
+                bImg.EndInit();
+
+                imageZone.Source = bImg;
+            }
+            else
+            {
+                if (nbMines != 0)
+                {
+                    bImg = new BitmapImage();
+                    bImg.BeginInit();
+                    bImg.DecodePixelWidth = Zone.TAILLE_ZONE * 10;  // Définir plus grand que requis?
+
+                    switch (nbMines)
+                    {
+                        case 1:
+                            bImg.UriSource = new Uri(@"Images\chiffre1.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 2:
+                            bImg.UriSource = new Uri(@"Images\chiffre2.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 3:
+                            bImg.UriSource = new Uri(@"Images\chiffre3.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 4:
+                            bImg.UriSource = new Uri(@"Images\chiffre4.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 5:
+                            bImg.UriSource = new Uri(@"Images\chiffre5.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 6:
+                            bImg.UriSource = new Uri(@"Images\chiffre6.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 7:
+                            bImg.UriSource = new Uri(@"Images\chiffre7.png", UriKind.RelativeOrAbsolute);
+                            break;
+                        case 8:
+                            bImg.UriSource = new Uri(@"Images\chiffre8.png", UriKind.RelativeOrAbsolute);
+                            break;
+                    }
+
+                    bImg.EndInit();
+                    imageZone.Source = bImg;
+                }
+                else
+                {
+                    // Zone vide sans mine avoisinante = pas d'image.
+                    imageZone.Source = null;
+                }
+
+            }
+            return imageZone;
+        }
+
+
         /// <summary>
         /// Affiche les images associées à chaque Zone de la grille de jeu à l'écran.
         /// </summary>
@@ -75,21 +165,28 @@ namespace Demineur
         {
             List<Zone> colonne;
             Image imgAffichage;
-
+            Border border;
             for (int i = 0; i <= Jeu.LstZones.Count - 1; i++)
             {
                 colonne = Jeu.LstZones[i];
 
                 for (int j = 0; j <= colonne.Count - 1; j++)
                 {
-                    imgAffichage = colonne[j].ImageZone;
-                    
-                    Grid.SetColumn(imgAffichage, i);
-                    Grid.SetRow(imgAffichage, j);
-                    // Les images "cachées" auront toutes un ZIndex = 1.
-                    Grid.SetZIndex(imgAffichage,1);
+                    imgAffichage = assignerImage(colonne[j].ContientMine, colonne[j].NbrMinesVoisins);
 
-                    grdChampMine.Children.Add(imgAffichage);
+                    border = new Border();
+                    border.BorderBrush = Brushes.Transparent;
+                    border.BorderThickness = new Thickness(1, 1, 1, 1);
+
+                    Grid.SetColumn(border, i);
+                    Grid.SetRow(border, j);
+                    // Les images "cachées" auront toutes un ZIndex = 1.
+                    Grid.SetZIndex(border, 1);
+                    border.Child = imgAffichage;
+                    grdChampMine.Children.Add(border);
+
+                    border.Background = Brushes.Transparent;
+                    border.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
                 }
             }
 
@@ -113,7 +210,7 @@ namespace Demineur
 
                     btnCouverture.Height = Zone.TAILLE_ZONE;
                     btnCouverture.Width = Zone.TAILLE_ZONE;
-                    btnCouverture.Focusable = false;                    
+                    btnCouverture.Focusable = false;
                     // On précise les gestionnaires d'évènements pour le bouton.
                     btnCouverture.Click += new RoutedEventHandler(btnCouverture_Click);
                     btnCouverture.MouseRightButtonUp += new MouseButtonEventHandler(btnCouverture_MouseRightButtonUp);
@@ -128,6 +225,51 @@ namespace Demineur
             }
         }
 
+        private void btnCouverture_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!PartieTermine)
+            {
+                Console.WriteLine("IN");
+                if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
+                {
+                    Console.WriteLine("Double");
+                    if (sender is Border)
+                    {
+                        Border b = sender as Border;
+                        int column = Grid.GetColumn(b);
+                        int row = Grid.GetRow(b);
+                        Console.WriteLine("Column : " + column + " Row : " + row);
+                        int nbrDrapeau = 0;
+                        int nbrMines = 0;
+                        List<Button> btnList = new List<Button>();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Zone courant = Jeu.LstZones[column][row].LstVoisins[i];
+                            if (courant == null)
+                                continue;
+                            if (courant.ContientMine)
+                                nbrMines++;
+                            int tmpRow = 0;
+                            int tmpColumn = 0;
+                            ObtenirCoordGrille(courant, ref tmpRow, ref tmpColumn);
+                            Button btn = buttonFromCoord(tmpColumn, tmpRow);
+                            if (btn.Content is StackPanel)
+                                nbrDrapeau++;
+                            btnList.Add(btn);
+                        }
+
+                        if (nbrDrapeau == nbrMines)
+                        {
+                            foreach (Button btn in btnList)
+                            {
+                                ActivateButton(btn);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Gestion des cliques gauches sur les boutons de couverture.
         /// Fonctionne quand le boutton est relaché (button up) pour permettre au joueur de changer d'idée (lacher le bouton ailleurs).
@@ -136,34 +278,80 @@ namespace Demineur
         /// <param name="e"></param>
         private void btnCouverture_Click(object sender, RoutedEventArgs e)
         {
-            Button btnSender;
-
-            if (!JoueurMort)
+            if (!PartieTermine)
             {
-                btnSender = (Button)sender;
+                if (sender is Button)
+                    ActivateButton(sender as Button);
+            }
+        }
 
-                // Faire disparaitre le bouton, quoiqu'il arrive.
-                btnSender.Visibility = Visibility.Hidden;
+        private Button buttonFromCoord(int column, int row)
+        {
+            Object bouton = grdChampMine.Children
+            .Cast<UIElement>()
+            .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
+            return (bouton as Button);
+        }
 
-                if (Jeu.LstZones[Grid.GetColumn(btnSender)][Grid.GetRow(btnSender)].ContientMine)
+        private void ActivateButton(Button btnSender)
+        {
+            int column;
+            int row;
+
+            // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
+            // la présence de ce type de "content" signifie qu'il y a une image.
+            if ((btnSender.Content is StackPanel))
+            {
+                return;
+            }
+            if (btnSender.Visibility == System.Windows.Visibility.Hidden)
+                return;
+            nbrCasesRestantes--;
+            btnSender.Visibility = Visibility.Hidden;
+
+            column = Grid.GetColumn(btnSender);
+            row = Grid.GetRow(btnSender);
+
+            if ((Jeu.LstZones[column][row].NbrMinesVoisins == 0 && !Jeu.LstZones[column][row].ContientMine))
+            {
+                for (int i = 0; i < 8; i++)
                 {
-                    Image imgBombe = new Image();
-                    BitmapImage bImg = new BitmapImage();
-                    bImg.BeginInit();
-                    bImg.UriSource = new Uri(@"Images\mine_explosion.png", UriKind.RelativeOrAbsolute);
-                    bImg.DecodePixelWidth = Zone.TAILLE_ZONE;
-                    bImg.EndInit();
-                    imgBombe.Source = bImg;
-
-                    Grid.SetColumn(imgBombe, Grid.GetColumn(btnSender));
-                    Grid.SetRow(imgBombe, Grid.GetRow(btnSender));
-                    // Afficher la bombe par dessus l'autre.
-                    Grid.SetZIndex(imgBombe, 2);
-
-                    grdChampMine.Children.Add(imgBombe);
-
-                    JoueurMort = true;
+                    if (Jeu.LstZones[column][row].LstVoisins[i] != null)
+                    {
+                        int zRow = 0;
+                        int zColumn = 0;
+                        ObtenirCoordGrille(Jeu.LstZones[column][row].LstVoisins[i], ref zRow, ref zColumn);
+                        Button btn = buttonFromCoord(zColumn, zRow);
+                        if (btn.Visibility == System.Windows.Visibility.Visible)
+                            ActivateButton(btn);
+                    }
                 }
+            }
+            ReveleBordure(row, column);
+            if (nbrCasesRestantes == 0)
+            {
+                Gagnee();
+            }
+
+
+            if (Jeu.LstZones[column][row].ContientMine)
+            {
+                Image imgBombe = new Image();
+                BitmapImage bImg = new BitmapImage();
+                bImg.BeginInit();
+                bImg.UriSource = new Uri(@"Images\mine_explosion.png", UriKind.RelativeOrAbsolute);
+                bImg.DecodePixelWidth = Zone.TAILLE_ZONE;
+                bImg.EndInit();
+                imgBombe.Source = bImg;
+
+                Grid.SetColumn(imgBombe, Grid.GetColumn(btnSender));
+                Grid.SetRow(imgBombe, Grid.GetRow(btnSender));
+                // Afficher la bombe par dessus l'autre.
+                Grid.SetZIndex(imgBombe, 2);
+
+                grdChampMine.Children.Add(imgBombe);
+
+                Perdu();
             }
         }
 
@@ -177,15 +365,16 @@ namespace Demineur
         {
             Button btnSender;
 
-            if (!JoueurMort)
+            if (!PartieTermine)
             {
                 btnSender = (Button)sender;
 
                 // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
                 // la présence de ce type de "content" signifie qu'il y a une image.
                 if ((btnSender.Content is StackPanel))
-                { 
+                {
                     btnSender.Content = null;
+                    ChangementDrapeau(false);
                 }
                 else
                 {
@@ -203,9 +392,82 @@ namespace Demineur
                     sp.Children.Add(img);
 
                     btnSender.Content = sp;
+                    ChangementDrapeau(true);
                 }
             }
-            
+
+        }
+
+        private void ReveleBordure(int row, int column)
+        {
+            //http://stackoverflow.com/questions/1511722/how-to-programmatically-access-control-in-wpf-grid-by-row-and-column-index
+            Object border = grdChampMine.Children
+                .Cast<UIElement>()
+                .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 1);
+            if (border is Border)
+            {
+                (border as Border).BorderBrush = Brushes.Black;
+            }
+        }
+
+        private void ObtenirCoordGrille(Zone z, ref int row, ref int column)
+        {
+            for (int i = 0; i < Jeu.LstZones.Count; i++)
+            {
+                for (int j = 0; j < Jeu.LstZones[0].Count; j++)
+                {
+                    if (Jeu.LstZones[i][j] == z)
+                    {
+                        column = i;
+                        row = j;
+                    }
+                }
+            }
+        }
+
+        private void Perdu()
+        {
+            PartieTermine = true;
+            JoueurMort = true;
+            if (Terminer != null)
+                Terminer(JoueurMort);
+        }
+
+        private void Gagnee()
+        {
+            PartieTermine = true;
+            JoueurMort = false;
+            if (Terminer != null)
+                Terminer(JoueurMort);
+        }
+
+        private void ChangementDrapeau(bool rajout)
+        {
+            if (Drapeau != null)
+            {
+                if (rajout)
+                    Drapeau(this, DrapeauEventArgs.Rajout);
+                else
+                    Drapeau(this, DrapeauEventArgs.Retrait);
+
+            }
+
+        }
+
+
+        private void ReveleCoins()
+        {
+            List<Tuple<int, int>> listCoord = new List<Tuple<int, int>>();
+            listCoord.Add(Tuple.Create(0, 0));
+            listCoord.Add(Tuple.Create(0, Jeu.LargeurChampMine - 1));
+            listCoord.Add(Tuple.Create(Jeu.LargeurChampMine - 1, 0));
+            listCoord.Add(Tuple.Create(Jeu.LargeurChampMine - 1, Jeu.HauteurChampMine - 1));
+
+            foreach (Tuple<int, int> coord in listCoord)
+            {
+                ActivateButton(buttonFromCoord(coord.Item1, coord.Item2));
+            }
+
         }
     }
 }

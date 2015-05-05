@@ -20,12 +20,99 @@ namespace Demineur
     /// </summary>
     public partial class MainWindow : Window
     {
+        private FenetreChampMines fenetreJeu;
         public MainWindow()
         {
             InitializeComponent();
-
-            FenetreChampMines fenetreJeu = new FenetreChampMines(5, 5, 4);
-            gridPrincipale.Children.Add(fenetreJeu);
         }
+
+        private void btnNouvellePartie_Click(object sender, RoutedEventArgs e)
+        {
+            FenetreNouvellePartie fenPartie = new FenetreNouvellePartie();
+            //DialogResult
+            if (fenPartie.ShowDialog().Value)
+            {
+                int largeur = fenPartie.Largeur;
+                int hauteur = fenPartie.Hauteur;
+                int nbrMines = fenPartie.NbrMines;
+                NouvellePartie(largeur, hauteur, nbrMines);
+            }
+        }
+
+        private void btnConfiguration_Click(object sender, RoutedEventArgs e)
+        {
+            FenetreConfiguration fenConfig = new FenetreConfiguration();
+            fenConfig.ShowDialog();
+        }
+
+        private void NouvellePartie(int largeur, int hauteur, int nbrMines)
+        {
+            if (fenetreJeu != null)
+            {
+                fenetreJeu.Terminer -= new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+                fenetreJeu.Drapeau -= new FenetreChampMines.DrapeauEventHandler(OnChangementDrapeau);
+                DefautLabelJeu();
+            }
+            gridPrincipale.Children.Remove(fenetreJeu);
+            fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines);
+            fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+            fenetreJeu.Drapeau += new FenetreChampMines.DrapeauEventHandler(OnChangementDrapeau);
+            gridPrincipale.Children.Add(fenetreJeu);
+            indicateurMine.SetMineCount(nbrMines);
+            indicateurMine.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void btnPartieRapide_Click(object sender, RoutedEventArgs e)
+        {
+            NouvellePartie(App.config.OptionUtilisateur.Largeur, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.NombresMines);
+        }
+
+        private void ChangeLabelJeu(object sender)
+        {
+            if (sender is bool)
+            {
+                bool joueurMort = (bool)sender;
+                if (joueurMort == true)
+                {
+                    lblPartie.Foreground = Brushes.Red;
+                    lblPartie.Content = "Partie Perdue";
+                }
+                else
+                    if (joueurMort == false)
+                    {
+                        lblPartie.Foreground = Brushes.Green;
+                        lblPartie.Content = "Partie Gagnée";
+                    }
+            }
+        }
+
+        private void DefautLabelJeu()
+        {
+            lblPartie.Foreground = Brushes.Black;
+            lblPartie.Content = "";
+        }
+
+        private void RetraitDrapeau()
+        {
+            indicateurMine.IncrementeMine();
+        }
+
+        private void RajoutDrapeau()
+        {
+            indicateurMine.DecrementeMine();
+        }
+
+        private void OnChangementDrapeau(object sender, FenetreChampMines.DrapeauEventArgs e)
+        {
+            if (e == FenetreChampMines.DrapeauEventArgs.Rajout)
+            {
+                RajoutDrapeau();
+            }
+            else if (e == FenetreChampMines.DrapeauEventArgs.Retrait)
+            {
+                RetraitDrapeau();
+            }
+        }
+
     }
 }

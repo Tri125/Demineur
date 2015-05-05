@@ -1,8 +1,28 @@
-﻿<Window x:Class="Demineur.MainWindow"
+﻿<Window xmlns:Demineur="clr-namespace:Demineur"  x:Class="Demineur.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid Name="gridPrincipale">
-    
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Row contenant le ToolBarTray, taille fixe car l'affichage devenait de taille disproportionner et indisirable. Reste élégant à la vue.-->
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="1.2*"></RowDefinition>
+            <!-- Row contenant le reste des contrôles -->
+            <RowDefinition Height="6*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Name="lblPartie" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <Menu Grid.Row="0" IsMainMenu="True">
+            <MenuItem Header="Jeu">
+                <MenuItem Name="btnPartieRapide" Header="Partie Rapide" Click="btnPartieRapide_Click" />
+                <MenuItem Name="btnNouvellePartie" Header="Nouvelle Partie" Click="btnNouvellePartie_Click"/>
+            </MenuItem>
+            <MenuItem Name="btnConfiguration" Header="Configuration" Click="btnConfiguration_Click"/>
+        </Menu>
+        <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Center" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="2">
+            <Grid Name="gridPrincipale">
+            </Grid>
+        </ScrollViewer>
+        <Demineur:UCIndicateurMine x:Name="indicateurMine" Visibility="Hidden"  MaxWidth="70" MaxHeight="70"  Grid.Row="3"/>
     </Grid>
 </Window>

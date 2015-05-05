@@ -56,12 +56,25 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes metier\ChampMine.cs" />
+    <Compile Include="Classes metier\ConfigJoueur.cs" />
+    <Compile Include="Classes metier\ConstructeurOption.cs" />
     <Compile Include="FenetreChampMine.xaml.cs">
       <DependentUpon>FenetreChampMine.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes metier\ListeVoisin.cs" />
     <Compile Include="Classes metier\Zone.cs" />
+    <Compile Include="UCIndicateurMine.xaml.cs">
+      <DependentUpon>UCIndicateurMine.xaml</DependentUpon>
+    </Compile>
     <Page Include="FenetreChampMine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FenetreConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FenetreNouvellePartie.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -73,10 +86,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FenetreConfiguration.xaml.cs">
+      <DependentUpon>FenetreConfiguration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FenetreNouvellePartie.xaml.cs">
+      <DependentUpon>FenetreNouvellePartie.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UCIndicateurMine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
