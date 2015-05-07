@@ -1,28 +1,35 @@
 ﻿<Window xmlns:Demineur="clr-namespace:Demineur"  x:Class="Demineur.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Démineur" Height="350" Width="525">
     <Grid>
         <Grid.RowDefinitions>
             <!-- Row contenant le ToolBarTray, taille fixe car l'affichage devenait de taille disproportionner et indisirable. Reste élégant à la vue.-->
             <RowDefinition Height="25"></RowDefinition>
+            <!-- Row contenant le label de statut de la partie -->
             <RowDefinition Height="1.2*"></RowDefinition>
-            <!-- Row contenant le reste des contrôles -->
+            <!-- Row contenant la grille du jeu -->
             <RowDefinition Height="6*"></RowDefinition>
+            <!-- Row contenant les indicateurs de la partie courante (drapeau/mine) -->
             <RowDefinition Height="3*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Label Name="lblPartie" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <!-- Contrôle de la bar de menu principal -->
         <Menu Grid.Row="0" IsMainMenu="True">
             <MenuItem Header="Jeu">
-                <MenuItem Name="btnPartieRapide" Header="Partie Rapide" Click="btnPartieRapide_Click" />
+                <!-- Créer une partie rapide: Utilise les paramètres de configuration de partie personnalisée -->
+                <MenuItem Name="btnPartieRapide" Header="Partie Rapide" Click="btnPartieRapide_Click" ToolTip="Lancer une partie selon vos configurations personnalisées"/>
                 <MenuItem Name="btnNouvellePartie" Header="Nouvelle Partie" Click="btnNouvellePartie_Click"/>
             </MenuItem>
             <MenuItem Name="btnConfiguration" Header="Configuration" Click="btnConfiguration_Click"/>
         </Menu>
+        <!-- Label utilisé pour indiquer lorsque la partie est gagné ou perdu -->
+        <Label Name="lblPartie" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <!-- La grille de jeu est dans un contrôle ScrollViewer pour faire apparaitre des barres de défilement lorsque la vue est trop petite. -->
         <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Center" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="2">
             <Grid Name="gridPrincipale">
             </Grid>
         </ScrollViewer>
+        <!-- L'indicateur de mines restantes selon les drapeaux utilisé. Caché par défaut lorsqu'il partie n'est pas en cours. -->
         <Demineur:UCIndicateurMine x:Name="indicateurMine" Visibility="Hidden"  MaxWidth="70" MaxHeight="70"  Grid.Row="3"/>
     </Grid>
 </Window>
