@@ -13,6 +13,8 @@ namespace Demineur
     /// </summary>
     public partial class App : Application
     {
+        //  Objet statique pour l'application où les variables de configuration de l'utilisateur
+        //  pourront être récupérées.
         public static ConstructeurOption config = new ConstructeurOption();
 
         protected override void OnStartup(StartupEventArgs e)
