@@ -13,6 +13,7 @@ namespace Demineur
     {
         // La taille, en pixel, d'une zone lors de l'affichage.
         public static int TAILLE_ZONE;
+        // Le nombre de mines contenues sur les Zones voisines de cette zone.
         private int nbrMinesVoisins;
 
         #region Attributs
@@ -43,6 +44,7 @@ namespace Demineur
         /// </summary>
         public Zone()
         {
+            // Assigne TAILLE_ZONE selon l'option de configuration de l'utilisateur.
             TAILLE_ZONE = App.config.OptionUtilisateur.TailleCases;
         }
 
@@ -85,6 +87,9 @@ namespace Demineur
             LstVoisins = new ListeVoisin(voisinNO, voisinN, voisinNE, voisinO, voisinE, voisinSO, voisinS, voisinSE);
         }
 
+        /// <summary>
+        /// Demande à la zone de vérifier ses voisins et d'assigner son nombre indiquant le nombre de mines sur les Zones voisines.
+        /// </summary>
         public void assignerCompteur()
         {
             NbrMinesVoisins = compterMineVoisines();

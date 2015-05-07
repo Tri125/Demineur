@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace Demineur
 {
     /// <summary>
-    /// La classe BBTA_ConstructeurOption gère la génération des fichiers XML pour enregistrer les paramètres de jeu de l'utilisateur, pour charger
+    /// La classe ConstructeurOption gère la génération des fichiers XML pour enregistrer les paramètres de jeu de l'utilisateur, pour charger
     /// les fichiers de configuration déjà présent, détecter les erreurs et effectuer les remplacements néccéssaires.
     /// </summary>
     public class ConstructeurOption
@@ -24,7 +24,9 @@ namespace Demineur
         private XmlSerializer serializer = null;
         private bool chargementReussis;
         #endregion
-
+        //  Valeur interne des options de configuration pour la génération du fichier de départ
+        //  ou la réparation. Le classe fallback automatiquement sur les variables internes si la réparation échoue
+        //  plutôt que de continuer à essayer de lire des fichiers.
         #region Option Usine
         private ConfigJoueur optionUsine;
         private const string nomUtilisateur = "utilisateurConfig.xml";
@@ -36,11 +38,12 @@ namespace Demineur
         private const int NOMBRE_DE_MINES = 4;
         #endregion
 
+        [Obsolete]
         public bool ChargementReussis { get { return chargementReussis; } }
         public ConfigJoueur OptionUtilisateur { get { return optionUtilisateur; } }
 
         /// <summary>
-        /// Constructeur de base de BBTA_ConstructeurOption.
+        /// Constructeur de base de ConstructeurOption.
         /// </summary>
         public ConstructeurOption()
         {
@@ -53,7 +56,7 @@ namespace Demineur
 
         /// <summary>
         /// Charge les paramètres d'usine dans un objet Option.
-        /// Les paramètres d'usine sont utilisés lors de la réparation et de la création de fichiers XML des paramètres de jeu.
+        /// Les paramètres d'usine sont utilisés lors de la réparation et de la création du fichiers XML des paramètres de jeu.
         /// </summary>
         private void OptionUsine()
         {
@@ -64,19 +67,52 @@ namespace Demineur
             this.optionUsine.NombresMines = NOMBRE_DE_MINES;
         }
 
+
         /// <summary>
-        /// ChercheFichierConfig recherche les fichiers de configuration par défaut et de l'utilisateur
-        /// d'après le nom des fichiers. Un attribut bool signale si oui ou non les fichiers sont présents.
+        /// Initialise le chargement et le teste des fichiers de configuration.
+        /// Vérifie si les fichiers ont été marqués comme étant défectueux.
+        /// Remplace les mauvais fichiers.
+        /// </summary>
+        public void Initialisation()
+        {
+            ChercheFichierConfig();
+            TesterFichier();
+            Console.WriteLine("Initialisation des fichiers de configuration");
+            Console.WriteLine("Fichier utilisateur trouvé : " + presentUtilisateur);
+            Console.WriteLine("Fichier utilisateur mal chargé : " + mauvaisUtilisateur);
+            if (mauvaisUtilisateur)
+            {
+                Reparation();
+                ChercheFichierConfig();
+                TesterFichier();
+                Console.WriteLine("RÉPARATION");
+                Console.WriteLine("Fichier utilisateur trouvé : " + presentUtilisateur);
+                Console.WriteLine("Fichier utilisateur mal chargé : " + mauvaisUtilisateur);
+            }
+            Console.WriteLine("Fin Initialisation");
+
+            //Si, malgré la réparation, un des fichiers est défectueux, alors on charge l'objet Option avec les paramètres d'usine.
+            if (mauvaisUtilisateur)
+            {
+                Console.WriteLine("Incapable de réparer : impossible d'écrire sur le disque");
+                RetourUsine(ref optionUtilisateur);
+
+            }
+        }
+
+        /// <summary>
+        /// ChercheFichierConfig recherche les fichiers de configuration de l'utilisateur
+        /// d'après le nom du fichier. Un attribut bool signale si oui ou non le fichier est présent.
         /// </summary>
         private void ChercheFichierConfig()
         {
             List<string> fichiers = new List<string>();
-
-            foreach (var path in Directory.GetFiles(Directory.GetCurrentDirectory()))
+            //  Fait une liste de tout les fichiers du dossier
+            foreach (String path in Directory.GetFiles(Directory.GetCurrentDirectory()))
             {
                 fichiers.Add(System.IO.Path.GetFileName(path));
             }
-
+            //  Vérifie qu'au moins un des fichiers est selui que l'on recherche
             foreach (string fichier in fichiers)
             {
                 if (fichier == nomUtilisateur)
@@ -89,7 +125,7 @@ namespace Demineur
 
         /// <summary>
         /// TesterFichier teste les fichiers de configuration s'ils ont été signalés comme étant présent.
-        /// Si la lecture provoque une erreur le fichier est marqué.
+        /// Si la lecture provoque une erreur, le fichier est marqué.
         /// </summary>
         private void TesterFichier()
         {
@@ -109,50 +145,15 @@ namespace Demineur
         }
 
         /// <summary>
-        /// Initialise le chargement et le teste des fichiers de configuration.
-        /// Vérifie si les fichiers ont été marqués comme étant défectueux.
-        /// Remplace les mauvais fichiers.
-        /// </summary>
-        public void Initialisation()
-        {
-            ChercheFichierConfig();
-            TesterFichier();
-            Console.WriteLine("Initialisation des fichiers de configuration");
-            Console.WriteLine("Fichier utilisateur trouvé : " + presentUtilisateur);
-            Console.WriteLine("Fichier utilisateur mal chargé : " + mauvaisUtilisateur);
-            if (mauvaisUtilisateur)
-            {
-                Reparation();
-                Console.WriteLine("RÉPARATION");
-                Console.WriteLine("Fichier utilisateur trouvé : " + presentUtilisateur);
-                Console.WriteLine("Fichier utilisateur mal chargé : " + mauvaisUtilisateur);
-            }
-            Console.WriteLine("Fin Initialisation");
-
-            //Si, malgré la réparation, un des fichiers est défectueux, alors on charge l'objet Option avec les paramètres d'usine.
-            if (mauvaisUtilisateur)
-            {
-                Console.WriteLine("Incapable de réparer : impossible d'écrire sur le disque");
-                RetourUsine(ref optionUtilisateur);
-
-            }
-        }
-
-        /// <summary>
         /// Reparation remplace l'objet Option et le fichier XML approprié par les paramètres d'usine.
         /// Vérifie que la réparation c'est bien effectuée.
         /// </summary>
         private void Reparation()
         {
-            if (mauvaisUtilisateur)
-            {
-                optionUtilisateur = new ConfigJoueur();
-                EcritureOption(nomUtilisateur, optionUsine);
-                mauvaisUtilisateur = false;
-                presentUtilisateur = false;
-                ChercheFichierConfig();
-                TesterFichier();
-            }
+            optionUtilisateur = new ConfigJoueur();
+            EcritureOption(nomUtilisateur, optionUsine);
+            mauvaisUtilisateur = false;
+            presentUtilisateur = false;
         }
 
 

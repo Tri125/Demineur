@@ -38,9 +38,11 @@ namespace Demineur
         private void initialiserChampMines(int nbMines)
         {
             genererChampMines(LargeurChampMine, HauteurChampMine);
+            //  Vérifie l'option utilisateur de mines dans les coins
             if (App.config.OptionUtilisateur.MinesCoins)
                 assignerMines(nbMines);
             else
+                // Si l'utilisateur ne veut pas de mines dans les coins, une autre méthode est exécuté
                 assignerMinesSansCoins(nbMines);
 
             lierZones();
@@ -99,8 +101,13 @@ namespace Demineur
 
         }
 
+        /// <summary>
+        /// À partir d'une liste de zones initialisée, assigne au hasard le nombre de mines demandées sauf dans les coins
+        /// </summary>
+        /// <param name="nbMines"></param>
         private void assignerMinesSansCoins(int nbMines)
         {
+            // Honnêtement, le code ce répète, mais j'ai préféré faire sa à la place de modifier le code existant.
             Random r = new Random(DateTime.Now.Millisecond);
             int x, y;
             Zone zoneCible;
@@ -232,7 +239,7 @@ namespace Demineur
         }
 
         /// <summary>
-        /// Demande à chaque zone de mettre à jour son image selon son contenu.
+        /// Demande à chaque zone de mettre à jour son compteur indiquant le nombre de mines dans les zones voisines.
         /// </summary>
         private void assignerCompteurs()
         {

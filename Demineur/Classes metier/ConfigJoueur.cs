@@ -9,6 +9,9 @@ using System.Xml.Serialization;
 
 namespace Demineur
 {
+    /// <summary>
+    /// Classe serializable des options de l'utilisateur
+    /// </summary>
     [Serializable]
     public class ConfigJoueur
     {
@@ -29,6 +32,14 @@ namespace Demineur
 
         public ConfigJoueur() { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="minesCoins">Faux pour ne pas générer des mines dans les coins</param>
+        /// <param name="tailleCases">Taille visuel des cases de la grille du jeu</param>
+        /// <param name="nbrMines">Nombre de mines</param>
+        /// <param name="hauteur">Hauteur de la grille du jeu</param>
+        /// <param name="largeur">Largeur de la grille du jeu</param>
         public ConfigJoueur(bool minesCoins, int tailleCases, int nbrMines, int hauteur, int largeur)
         {
             MinesCoins = minesCoins;

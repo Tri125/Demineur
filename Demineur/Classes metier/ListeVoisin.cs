@@ -26,6 +26,7 @@ namespace Demineur
         #endregion
 
         #region Indexer
+        // Représentation en 2D de la carte de l'indexer:
         /*
          * [0]  [1] [2]
          * 
@@ -33,6 +34,13 @@ namespace Demineur
          * 
          * [5]  [6] [7]
          */
+        /// <summary>
+        /// Permet d'accéder aux Zones selon une index.
+        /// D'une grille 2D, [0] étant VoisinNO, le centre étant l'instance actuel (aucune index pour y accéder)
+        /// et [7] étant VoisinSE
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
         public Zone this[int i]
         {
             get
