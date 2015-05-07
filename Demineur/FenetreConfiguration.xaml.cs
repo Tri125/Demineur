@@ -16,31 +16,43 @@ namespace Demineur
 {
     /// <summary>
     /// Interaction logic for FenetreConfiguration.xaml
+    /// Fenêtre de configuration
     /// </summary>
     public partial class FenetreConfiguration : Window
     {
         public FenetreConfiguration()
         {
             InitializeComponent();
+            //  Initialise la valeur du slider de taille de cases selon les configurations de l'utilisateur.
             sTaille.Value = App.config.OptionUtilisateur.TailleCases;
-            Console.WriteLine("Me " + App.config.OptionUtilisateur.TailleCases);
+            //  Évênement enregistré dans le code pour éviter que la méthode soit exécuté lors de l'initialisation.
+            sTaille.ValueChanged += new RoutedPropertyChangedEventHandler<double>(sTaille_ValueChanged);
+
+            // Initialise la valeur de la checkbox des mines de coins selon les configurations de l'utilisateur.
             chkMinesCoins.IsChecked = App.config.OptionUtilisateur.MinesCoins;
         }
 
+        /// <summary>
+        /// Enregistre un nouveau fichier de configuration selon les valeurs des contrôles de la fenêtre.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            ConfigJoueur config = new ConfigJoueur(App.config.OptionUtilisateur.MinesCoins, App.config.OptionUtilisateur.TailleCases,
-                App.config.OptionUtilisateur.NombresMines, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.Largeur);
-            App.config.EnregistrementUtilisateur(ref config);
+            //  Met à jour le fichier de configuration.
+            App.config.EnregistreConfigCourante();
             this.Close();
         }
 
+        /// <summary>
+        /// Évênement lorsque la valeur du Slider de la taille des cases change.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void sTaille_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (e.OldValue == 0)
-                return;
+            //  Enregistre la valeur du Slider dans les configurations.
             App.config.OptionUtilisateur.TailleCases = (int)e.NewValue;
-            Console.WriteLine(App.config.OptionUtilisateur.TailleCases);
         }
 
         private void CheckBox_Changed(object sender, RoutedEventArgs e)

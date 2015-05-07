@@ -234,6 +234,15 @@ namespace Demineur
         }
 
         /// <summary>
+        /// Ré-écriture de l'objet d'option de l'utilisateur actuellement chargé
+        /// Utile si les configurations sont changé lors de l'exécution et qu'il faudrait mettre à jour le fichier.
+        /// </summary>
+        public void EnregistreConfigCourante()
+        {
+            EnregistrementUtilisateur(ref optionUtilisateur);
+        }
+
+        /// <summary>
         /// Change les options utilisés vers les paramètres de d'usine.
         /// </summary>
         private void RetourUsine(ref ConfigJoueur option)
