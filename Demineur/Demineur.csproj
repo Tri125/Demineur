@@ -58,6 +58,7 @@
     <Compile Include="Classes metier\ChampMine.cs" />
     <Compile Include="Classes metier\ConfigJoueur.cs" />
     <Compile Include="Classes metier\ConstructeurOption.cs" />
+    <Compile Include="Classes metier\DrapeauEventArgs.cs" />
     <Compile Include="FenetreChampMine.xaml.cs">
       <DependentUpon>FenetreChampMine.xaml</DependentUpon>
     </Compile>

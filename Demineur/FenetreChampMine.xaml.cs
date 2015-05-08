@@ -25,14 +25,6 @@ namespace Demineur
         public delegate void DrapeauEventHandler(object sender, DrapeauEventArgs e);
         public event DrapeauEventHandler Drapeau;
 
-        public class DrapeauEventArgs : EventArgs
-        {
-            private DrapeauEventArgs() { }
-
-            public static readonly DrapeauEventArgs Rajout = new DrapeauEventArgs();
-            public static readonly DrapeauEventArgs Retrait = new DrapeauEventArgs();
-        }
-
         private ChampMines Jeu { get; set; }
         private bool JoueurMort { get; set; }
         private bool PartieTermine { get; set; }

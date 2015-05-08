@@ -137,13 +137,13 @@ namespace Demineur
 
         // Selon DrapeauEventArgs qui indique si un drapeau a été rajouté ou retiré,
         // appel les méthodes appropriées.
-        private void OnChangementDrapeau(object sender, FenetreChampMines.DrapeauEventArgs e)
+        private void OnChangementDrapeau(object sender, DrapeauEventArgs e)
         {
-            if (e == FenetreChampMines.DrapeauEventArgs.Rajout)
+            if (e == DrapeauEventArgs.Rajout)
             {
                 RajoutDrapeau();
             }
-            else if (e == FenetreChampMines.DrapeauEventArgs.Retrait)
+            else if (e == DrapeauEventArgs.Retrait)
             {
                 RetraitDrapeau();
             }
