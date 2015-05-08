@@ -16,13 +16,11 @@ namespace Demineur
     public class ConstructeurOption
     {
         #region Attribut
-        private ConfigJoueur optionUtilisateur;
         private bool mauvaisUtilisateur;
         private bool presentUtilisateur;
         private XmlTextReader lecteur = null;
         private XmlTextWriter ecriveur = null;
         private XmlSerializer serializer = null;
-        private bool chargementReussis;
         #endregion
         //  Valeur interne des options de configuration pour la génération du fichier de départ
         //  ou la réparation. Le classe fallback automatiquement sur les variables internes si la réparation échoue
@@ -38,16 +36,15 @@ namespace Demineur
         private const int NOMBRE_DE_MINES = 4;
         #endregion
 
-        [Obsolete]
-        public bool ChargementReussis { get { return chargementReussis; } }
-        public ConfigJoueur OptionUtilisateur { get { return optionUtilisateur; } }
+        public bool ChargementReussis { get; private set; }
+        public ConfigJoueur OptionUtilisateur { get; private set; }
 
         /// <summary>
         /// Constructeur de base de ConstructeurOption.
         /// </summary>
         public ConstructeurOption()
         {
-            optionUtilisateur = new ConfigJoueur();
+            OptionUtilisateur = new ConfigJoueur();
             optionUsine = new ConfigJoueur();
             serializer = new XmlSerializer(typeof(ConfigJoueur));
             //On charge l'objet Option d'usine qui contient les paramètres d'usine du jeu.
@@ -95,7 +92,7 @@ namespace Demineur
             if (mauvaisUtilisateur)
             {
                 Console.WriteLine("Incapable de réparer : impossible d'écrire sur le disque");
-                RetourUsine(ref optionUtilisateur);
+                RetourUsine(OptionUtilisateur);
 
             }
         }
@@ -132,8 +129,8 @@ namespace Demineur
 
             if (presentUtilisateur)
             {
-                LectureOption(nomUtilisateur, ref optionUtilisateur);
-                if (chargementReussis == false)
+                OptionUtilisateur = LectureOption(nomUtilisateur);
+                if (ChargementReussis == false)
                 {
                     mauvaisUtilisateur = true;
                 }
@@ -150,7 +147,7 @@ namespace Demineur
         /// </summary>
         private void Reparation()
         {
-            optionUtilisateur = new ConfigJoueur();
+            OptionUtilisateur = new ConfigJoueur();
             EcritureOption(nomUtilisateur, optionUsine);
             mauvaisUtilisateur = false;
             presentUtilisateur = false;
@@ -162,23 +159,22 @@ namespace Demineur
         /// </summary>
         /// <param name="FichierEntre">Nom du fichier.</param>
         /// <param name="option">Objet Option où les paramètres seront enregistrés.</param>
-        private void LectureOption(string FichierEntre, ref ConfigJoueur option)
+        private ConfigJoueur LectureOption(string FichierEntre)
         {
-
+            ConfigJoueur config;
             try
             {
                 lecteur = new XmlTextReader(FichierEntre);
-                option = (ConfigJoueur)serializer.Deserialize(lecteur);
-                chargementReussis = true;
+                config = (ConfigJoueur)serializer.Deserialize(lecteur);
+                ChargementReussis = true;
             }
 
 
             catch (Exception ex)
             {
-                option = null;
-                chargementReussis = false;
+                ChargementReussis = false;
                 Console.WriteLine(ex.Message);
-                return;
+                return null;
             }
 
             finally
@@ -189,6 +185,7 @@ namespace Demineur
                     lecteur.Dispose();
                 }
             }
+            return config;
         }
 
         /// <summary>
@@ -227,7 +224,7 @@ namespace Demineur
         /// <summary>
         /// Enregistre un nouveau fichier de configuration de l'utilisateur à partir d'un objet Option et lance son chargement.
         /// </summary>
-        public void EnregistrementUtilisateur(ref ConfigJoueur option)
+        public void EnregistrementUtilisateur(ConfigJoueur option)
         {
             EcritureOption(nomUtilisateur, option);
             Initialisation();
@@ -239,13 +236,13 @@ namespace Demineur
         /// </summary>
         public void EnregistreConfigCourante()
         {
-            EnregistrementUtilisateur(ref optionUtilisateur);
+            EnregistrementUtilisateur(OptionUtilisateur);
         }
 
         /// <summary>
         /// Change les options utilisés vers les paramètres de d'usine.
         /// </summary>
-        private void RetourUsine(ref ConfigJoueur option)
+        private void RetourUsine(ConfigJoueur option)
         {
             option = optionUsine;
         }

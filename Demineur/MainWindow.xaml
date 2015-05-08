@@ -21,6 +21,10 @@
                 <MenuItem Name="btnNouvellePartie" Header="Nouvelle Partie" Click="btnNouvellePartie_Click"/>
             </MenuItem>
             <MenuItem Name="btnConfiguration" Header="Configuration" Click="btnConfiguration_Click"/>
+            <MenuItem Header="Mémoire">
+                <MenuItem Name="btnChargement" Header="Charger une mémoire" Click="btnChargement_Click" ToolTip="Charger un fichier mémoire pour résumer une partie"/>
+                <MenuItem Name="btnSauvegarder" Header="Sauvegarder une mémoire" Click="btnSauvegarder_Click" ToolTip="Sauvegarde la partie en cours dans un fichier mémoire" IsEnabled="False"/>
+            </MenuItem>
         </Menu>
         <!-- Label utilisé pour indiquer lorsque la partie est gagné ou perdu -->
         <Label Name="lblPartie" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>

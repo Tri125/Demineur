@@ -33,18 +33,24 @@ namespace Demineur
 
         public readonly int TAILLE_CASES;
 
+        public MemoirePartie MemoireJeu { get; set; }
+
         //  Nombre de cases sans mines restantes qui doivent être dévoilées afin de gagner la partie.
         private int NbrCasesRestantes { get; set; }
 
         public FenetreChampMines(int largeur, int hauteur, int nbMines, int tailleCase, bool minesCoins)
         {
+            MemoireJeu = new MemoirePartie();
+            MemoireJeu.CliqueDroit = new List<Point>();
+            MemoireJeu.CliqueGauche = new List<Point>();
+            MemoireJeu.Configuration = new ConfigJoueur(minesCoins, tailleCase, nbMines, hauteur, largeur);
             TAILLE_CASES = tailleCase;
 
             InitializeComponent();
 
             // Générer la structure du champ de mines.
             Jeu = new ChampMines(largeur, hauteur, nbMines, minesCoins);
-
+            MemoireJeu.RandomSeed = Jeu.Seed;
             NbrCasesRestantes = (largeur * hauteur) - nbMines;
 
             // Modifie la Grid pour correspondre au champ de mine du jeu.
@@ -63,6 +69,58 @@ namespace Demineur
                 //  Dévoile les coins comme si le joueur aurait cliqué sur les boutons.
                 ReveleCoins();
 
+        }
+
+
+        public FenetreChampMines(MemoirePartie memoire)
+        {
+            MemoireJeu = memoire;
+            MemoireJeu.CliqueDroit = memoire.CliqueDroit;
+            MemoireJeu.CliqueGauche = memoire.CliqueGauche;
+
+            bool minesCoins = MemoireJeu.Configuration.MinesCoins;
+            int largeur = MemoireJeu.Configuration.Largeur;
+            int hauteur = MemoireJeu.Configuration.Hauteur;
+            int nbMines = MemoireJeu.Configuration.NombresMines;
+
+            TAILLE_CASES = MemoireJeu.Configuration.TailleCases;
+
+            InitializeComponent();
+
+            // Générer la structure du champ de mines.
+            Jeu = new ChampMines(largeur, hauteur, nbMines, MemoireJeu.RandomSeed, minesCoins);
+            MemoireJeu.RandomSeed = Jeu.Seed;
+            NbrCasesRestantes = (largeur * hauteur) - nbMines;
+
+            // Modifie la Grid pour correspondre au champ de mine du jeu.
+            genererGrilleJeu();
+
+            // Affiche le premier niveau - les mines et les chiffres.
+            afficherZones();
+
+            // Couvre le premier niveau d'un second niveau - les éléments qui cachent le jeu.
+            afficherCouverture();
+
+            JoueurMort = false;
+
+            //  Si dans les configurations l'utilisateur ne veut pas de mines dans les coins
+            if (!minesCoins)
+                //  Dévoile les coins comme si le joueur aurait cliqué sur les boutons.
+                ReveleCoins();
+
+        }
+
+        public void RejouerParMemoire(List<Point> actionGauche, List<Point> actionDroite)
+        {
+            foreach  (Point p in actionGauche)
+            {
+                ActivateButton(buttonFromCoord((int)p.X, (int)p.Y));
+            }
+
+            foreach (Point p in actionDroite)
+            {
+                ToggleDrapeau(buttonFromCoord((int)p.X, (int)p.Y));
+            }
         }
 
         /// <summary>
@@ -290,6 +348,7 @@ namespace Demineur
                 foreach (Button btn in btnList)
                 {
                     ActivateButton(btn);
+                    EnregistreActionCliqueGauche(btn);
                 }
             }
         }
@@ -305,9 +364,25 @@ namespace Demineur
             if (!PartieTermine)
             {
                 if (sender is Button)
-                    ActivateButton(sender as Button);
+                {
+                    Button btn = sender as Button;
+                    ActivateButton(btn);
+                    EnregistreActionCliqueGauche(btn);
+                }
             }
         }
+
+        private void EnregistreActionCliqueGauche(Button btn)
+        {
+            // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
+            // la présence de ce type de "content" signifie qu'il y a une image.
+            if ((btn.Content is StackPanel))
+            {
+                return;
+            }
+            MemoireJeu.CliqueGauche.Add(new Point(Grid.GetRow(btn), Grid.GetColumn(btn)));
+        }
+
 
         /// <summary>
         /// Obtient un contrôle Button de la grille à partir du numéro de colonne et du numéro de ligne.
@@ -415,34 +490,47 @@ namespace Demineur
             if (!PartieTermine)
             {
                 btnSender = (Button)sender;
-
-                // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
-                // la présence de ce type de "content" signifie qu'il y a une image.
-                if ((btnSender.Content is StackPanel))
-                {
-                    btnSender.Content = null;
-                    ChangementDrapeau(false);
-                }
-                else
-                {
-                    ImageBrush ib = new ImageBrush();
-                    Image img = new Image();
-                    BitmapImage bImg = new BitmapImage();
-                    bImg.BeginInit();
-                    bImg.UriSource = new Uri(@"Images\drapeau.png", UriKind.RelativeOrAbsolute);
-                    bImg.DecodePixelWidth = TAILLE_CASES;
-                    bImg.EndInit();
-                    img.Source = bImg;
-
-                    StackPanel sp = new StackPanel();
-                    //sp.Orientation = Orientation.Horizontal;
-                    sp.Children.Add(img);
-
-                    btnSender.Content = sp;
-                    ChangementDrapeau(true);
-                }
+                ToggleDrapeau(btnSender);
+                EnregistreDrapeaux(btnSender);
             }
 
+        }
+
+        // À l'utiliser seulement lorsqu'on est pret en l'enregistrement de la partie puisqu'un drapeau peut être enlevé et rajouté n'importe quand et comment on est
+        // seulement interessé au dernier état.
+        // TODO: Uniquement prendre le dernier état.
+        private void EnregistreDrapeaux(Button btn)
+        {
+            MemoireJeu.CliqueDroit.Add(new Point(Grid.GetRow(btn), Grid.GetColumn(btn)));
+        }
+
+        private void ToggleDrapeau(Button btnSender)
+        {
+            // Puisqu'on utilise un StackPanel pour ajouter une image au bouton, 
+            // la présence de ce type de "content" signifie qu'il y a une image.
+            if ((btnSender.Content is StackPanel))
+            {
+                btnSender.Content = null;
+                ChangementDrapeau(false);
+            }
+            else
+            {
+                ImageBrush ib = new ImageBrush();
+                Image img = new Image();
+                BitmapImage bImg = new BitmapImage();
+                bImg.BeginInit();
+                bImg.UriSource = new Uri(@"Images\drapeau.png", UriKind.RelativeOrAbsolute);
+                bImg.DecodePixelWidth = TAILLE_CASES;
+                bImg.EndInit();
+                img.Source = bImg;
+
+                StackPanel sp = new StackPanel();
+                //sp.Orientation = Orientation.Horizontal;
+                sp.Children.Add(img);
+
+                btnSender.Content = sp;
+                ChangementDrapeau(true);
+            }
         }
 
         /// <summary>
@@ -557,5 +645,6 @@ namespace Demineur
             }
 
         }
+
     }
 }

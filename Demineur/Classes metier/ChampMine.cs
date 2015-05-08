@@ -13,6 +13,8 @@ namespace Demineur
         public List<List<Zone>> LstZones { get; private set; }
         public int LargeurChampMine { get; private set; }
         public int HauteurChampMine { get; private set; }
+        private Random Hasard { get; set; }
+        public int Seed { get; private set; }
 
         #endregion
 
@@ -23,7 +25,23 @@ namespace Demineur
             {
                 throw new Exception("Un champ de mine ne peut avoir une dimension plus petite que 2 en largeur ou en hauteur.");
             }
+            Seed = DateTime.Now.Millisecond;
+            Hasard = new Random(Seed);
+            LargeurChampMine = largeur;
+            HauteurChampMine = hauteur;
 
+            initialiserChampMines(nbMines, minesCoins);
+        }
+
+        //  Valeur par défaut de minesCoins pour garder l'interface du constructeur stable.
+        public ChampMines(int largeur, int hauteur, int nbMines, int seed, bool minesCoins = true)
+        {
+            if (largeur < 2 || hauteur < 2)
+            {
+                throw new Exception("Un champ de mine ne peut avoir une dimension plus petite que 2 en largeur ou en hauteur.");
+            }
+            Seed = seed;
+            Hasard = new Random(Seed);
             LargeurChampMine = largeur;
             HauteurChampMine = hauteur;
 
@@ -51,6 +69,7 @@ namespace Demineur
 
             assignerCompteurs();
         }
+
 
         /// <summary>
         /// Génère la structure à deux dimensions qui va contenir les zones.
@@ -82,15 +101,14 @@ namespace Demineur
         /// </summary>
         private void assignerMines(int nbMines)
         {
-            Random r = new Random(DateTime.Now.Millisecond);
             int x, y;
             Zone zoneCible;
             int minesGeneree = 0;
 
             while (minesGeneree < nbMines)
             {
-                x = r.Next(LstZones.Count);
-                y = r.Next(LstZones[0].Count);
+                x = Hasard.Next(LstZones.Count);
+                y = Hasard.Next(LstZones[0].Count);
 
                 zoneCible = LstZones[x][y];
 
@@ -110,7 +128,6 @@ namespace Demineur
         private void assignerMinesSansCoins(int nbMines)
         {
             // Honnêtement, le code ce répète, mais j'ai préféré faire sa à la place de modifier le code existant.
-            Random r = new Random(DateTime.Now.Millisecond);
             int x, y;
             Zone zoneCible;
             int minesGeneree = 0;
@@ -119,8 +136,8 @@ namespace Demineur
             {
                 do
                 {
-                    x = r.Next(LstZones.Count);
-                    y = r.Next(LstZones[0].Count);
+                    x = Hasard.Next(LstZones.Count);
+                    y = Hasard.Next(LstZones[0].Count);
                 } while ( (x == 0 && y == 0) || (x == LstZones.Count -1 && y == 0) || (x == 0 && y == LstZones[0].Count - 1) || ( x == LstZones.Count() -1 && y == LstZones[0].Count() -1) );
                 zoneCible = LstZones[x][y];
 

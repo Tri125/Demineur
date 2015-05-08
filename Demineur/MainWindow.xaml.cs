@@ -20,10 +20,13 @@ namespace Demineur
     /// </summary>
     public partial class MainWindow : Window
     {
+        public GestionSauvegarde GestionMemoire { get; private set; }
+
         private FenetreChampMines fenetreJeu;
         public MainWindow()
         {
             InitializeComponent();
+            GestionMemoire = new GestionSauvegarde();
         }
 
         //  Lorsque le bouton de nouvelle partie est cliqué.
@@ -41,7 +44,9 @@ namespace Demineur
                 int largeur = fenPartie.Largeur;
                 int hauteur = fenPartie.Hauteur;
                 int nbrMines = fenPartie.NbrMines;
-                NouvellePartie(largeur, hauteur, nbrMines);
+                int tailleCase = App.config.OptionUtilisateur.TailleCases;
+                bool minesCoins = App.config.OptionUtilisateur.MinesCoins;
+                NouvellePartie(largeur, hauteur, nbrMines, tailleCase, minesCoins);
             }
         }
 
@@ -59,8 +64,9 @@ namespace Demineur
         /// <param name="largeur">Largeur du jeu</param>
         /// <param name="hauteur">Hauteur du jeu</param>
         /// <param name="nbrMines">Nombre de mines du jeu</param>
-        private void NouvellePartie(int largeur, int hauteur, int nbrMines)
+        private void NouvellePartie(int largeur, int hauteur, int nbrMines, int tailleCase, bool minesCoins)
         {
+            btnSauvegarder.IsEnabled = true;
             // S'il y a déjà une partie en cours
             if (fenetreJeu != null)
             {
@@ -71,7 +77,7 @@ namespace Demineur
             }
             // Pas besoin de vérifier s'il était déjà présent ou non.
             gridPrincipale.Children.Remove(fenetreJeu);
-            fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines, App.config.OptionUtilisateur.TailleCases, App.config.OptionUtilisateur.MinesCoins);
+            fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines, tailleCase, minesCoins);
 
             // Inscription aux évênements de FenetreChampMines pour savoir lorsque la partie est terminé et lorsqu'un drapeau est enlevé/placé.
             fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
@@ -89,7 +95,8 @@ namespace Demineur
         private void btnPartieRapide_Click(object sender, RoutedEventArgs e)
         {
             // Crée une nouvelle partie selon les configurations personnalisées de l'utilisateur.
-            NouvellePartie(App.config.OptionUtilisateur.Largeur, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.NombresMines);
+            NouvellePartie(App.config.OptionUtilisateur.Largeur, App.config.OptionUtilisateur.Hauteur, App.config.OptionUtilisateur.NombresMines,
+                App.config.OptionUtilisateur.TailleCases, App.config.OptionUtilisateur.MinesCoins);
 
             //  TODO Créer une nouvelle partie selon les derniers paramètres utilisés.
         }
@@ -146,6 +153,63 @@ namespace Demineur
             else if (e == DrapeauEventArgs.Retrait)
             {
                 RetraitDrapeau();
+            }
+        }
+
+        private void btnChargement_Click(object sender, RoutedEventArgs e)
+        {
+            GestionMemoire.LectureMemoire("mem");
+            if (GestionMemoire.ChargementReussis)
+            {
+                NouvellePartieMemoire(GestionMemoire.Memoire);
+            }
+            else
+                Console.WriteLine("Aucun fichier mémoire détecté");
+        }
+
+        private void NouvellePartieMemoire(MemoirePartie mem)
+        {
+            NouvellePartieSeed(mem);
+        }
+
+        /// <summary>
+        /// Créer une nouvelle partie avec un seed prédéfinie (partie par mémoire)
+        /// </summary>
+        /// <param name="mem">Sauvegarde de la partie</param>
+        private void NouvellePartieSeed(MemoirePartie mem)
+        {
+            btnSauvegarder.IsEnabled = true;
+            // S'il y a déjà une partie en cours
+            if (fenetreJeu != null)
+            {
+                // On désinscrit des évênements et on remet par défaut le label du statut de la partie (faire disparaître).
+                fenetreJeu.Terminer -= new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+                fenetreJeu.Drapeau -= new FenetreChampMines.DrapeauEventHandler(OnChangementDrapeau);
+                DefautLabelJeu();
+            }
+            // Pas besoin de vérifier s'il était déjà présent ou non.
+            gridPrincipale.Children.Remove(fenetreJeu);
+            fenetreJeu = new FenetreChampMines(mem);
+
+            // Inscription aux évênements de FenetreChampMines pour savoir lorsque la partie est terminé et lorsqu'un drapeau est enlevé/placé.
+            fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);
+            fenetreJeu.Drapeau += new FenetreChampMines.DrapeauEventHandler(OnChangementDrapeau);
+
+            gridPrincipale.Children.Add(fenetreJeu);
+
+            // Initialise le compteur de mines.
+            indicateurMine.SetMineCount(mem.Configuration.NombresMines);
+            // On rend visible le compteur.
+            indicateurMine.Visibility = System.Windows.Visibility.Visible;
+
+            fenetreJeu.RejouerParMemoire(mem.CliqueGauche, mem.CliqueDroit);
+        }
+
+        private void btnSauvegarder_Click(object sender, RoutedEventArgs e)
+        {
+            if (fenetreJeu != null)
+            {
+                GestionMemoire.EnregistreMemoire("mem", fenetreJeu.MemoireJeu);
             }
         }
 
