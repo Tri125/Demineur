@@ -253,15 +253,21 @@ namespace Demineur
             }
         }
 
+        /// <summary>
+        /// Si le nombre de drapeau sur les cases adjacentes du Border est égal au nombre de mines, alors les cases seront toutes dévoilées.
+        /// </summary>
+        /// <param name="sender"></param>
         private void DoubleClique(Border sender)
         {
             int column = Grid.GetColumn(sender);
             int row = Grid.GetRow(sender);
             int nbrDrapeau = 0;
             int nbrMines = 0;
+            // Liste des boutons adjacents à la position du Border.
             List<Button> btnList = new List<Button>();
             for (int i = 0; i < 8; i++)
             {
+                // Utilisation de l'index de ListeVoisin pour une itération bien rapide et sans écrire de longue lignes avec des noms d'attributs très spécifiques...
                 Zone courant = Jeu.LstZones[column][row].LstVoisins[i];
                 if (courant == null)
                     continue;
@@ -269,8 +275,11 @@ namespace Demineur
                     nbrMines++;
                 int tmpRow = 0;
                 int tmpColumn = 0;
+                //  Obtient les coordonnées de la grille de la Zone.
                 ObtenirCoordGrille(courant, ref tmpRow, ref tmpColumn);
+                //  Obtient un contrôle bouton à partir des coordonnées de la grille.
                 Button btn = buttonFromCoord(tmpRow, tmpColumn);
+                // Drapeau utilise StackPanel comme contenue.
                 if (btn.Content is StackPanel)
                     nbrDrapeau++;
                 btnList.Add(btn);
@@ -300,14 +309,25 @@ namespace Demineur
             }
         }
 
+        /// <summary>
+        /// Obtient un contrôle Button de la grille à partir du numéro de colonne et du numéro de ligne.
+        /// </summary>
+        /// <param name="row">X (Largeur)</param>
+        /// <param name="column">Y (Hauteur)</param>
+        /// <returns></returns>
         private Button buttonFromCoord(int row, int column)
         {
+            // Lance une exception si aucun résultat
             Object bouton = grdChampMine.Children
             .Cast<UIElement>()
             .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 2);
             return (bouton as Button);
         }
 
+        /// <summary>
+        /// À partir d'un Button, active le comme il aurait été cliqué.
+        /// </summary>
+        /// <param name="btnSender">Le bouton à activé</param>
         private void ActivateButton(Button btnSender)
         {
             int column;
@@ -319,24 +339,36 @@ namespace Demineur
             {
                 return;
             }
+            //  Si caché, alors le bouton a déjà été dévoilée.
             if (btnSender.Visibility == System.Windows.Visibility.Hidden)
                 return;
+
             NbrCasesRestantes--;
+            //  Cache le bouton pour montrer la case en dessous.
             btnSender.Visibility = Visibility.Hidden;
 
             column = Grid.GetColumn(btnSender);
             row = Grid.GetRow(btnSender);
 
+            //  Si la case ne contient pas de mine et qu'il n'y a pas de mines adjacentes, alors il faut propager l'activation du bouton sur les voisins.
             if ((Jeu.LstZones[column][row].NbrMinesVoisins == 0 && !Jeu.LstZones[column][row].ContientMine))
             {
                 for (int i = 0; i < 8; i++)
                 {
+                    //  Utilise l'indexer de ListeVoisin pour vérifier les voisins bien rapidement.
+                    //  Si null, alors l'origine est un coin et nous sommes à l'extérieur du jeu.
                     if (Jeu.LstZones[column][row].LstVoisins[i] != null)
                     {
                         int zRow = 0;
                         int zColumn = 0;
+                        //  À partir de la Zone, récupère ses coordonnées dans la grille.
                         ObtenirCoordGrille(Jeu.LstZones[column][row].LstVoisins[i], ref zRow, ref zColumn);
+                        //  Récupère le contrôle Button à ces même coordonnées.
                         Button btn = buttonFromCoord(zRow, zColumn);
+                        // Si le Button est visible, alors il n'a pas déjà été dévoilé.
+                        // Utilisation de VIsibility à la place de IsVisible, car IsVisible ne regarde pas la logique, mais bien le rendu à l'écran.
+                        // L'activation des boutons dans les coins (avec l'option de configuration) est lancé bien avant que l'affichage soit complété, donc la
+                        // condition était innappropriée.
                         if (btn.Visibility == System.Windows.Visibility.Visible)
                             ActivateButton(btn);
                     }
@@ -413,18 +445,33 @@ namespace Demineur
 
         }
 
+        /// <summary>
+        /// À partir des coordonnées dans la grille, révèle la bordure qui si trouve.
+        /// Pour faire apparaitre la grille de jeu sur les cases dévoilées.
+        /// </summary>
+        /// <param name="row">X</param>
+        /// <param name="column">Y</param>
         private void ReveleBordure(int row, int column)
         {
             //http://stackoverflow.com/questions/1511722/how-to-programmatically-access-control-in-wpf-grid-by-row-and-column-index
+            //  Lance une exception si aucun résultat.
             Object border = grdChampMine.Children
                 .Cast<UIElement>()
                 .First(s => Grid.GetRow(s) == row && Grid.GetColumn(s) == column && Grid.GetZIndex(s) == 1);
             if (border is Border)
             {
+                //  Change la Brush de la bordure en noir.
                 (border as Border).BorderBrush = Brushes.Black;
             }
         }
 
+        /// <summary>
+        /// À partir d'une Zone, retrouve ses coordonnées dans la List de List de zone.
+        /// Les coordonnées map directement l'emplacement sur la grille de jeu.
+        /// </summary>
+        /// <param name="z">La Zone à trouvé</param>
+        /// <param name="row">X Le résultat sera mit dans la variable</param>
+        /// <param name="column">Y Le résultat sera mit dans la variable</param>
         private void ObtenirCoordGrille(Zone z, ref int row, ref int column)
         {
             for (int i = 0; i < Jeu.LstZones.Count; i++)
@@ -440,26 +487,45 @@ namespace Demineur
             }
         }
 
+        /// <summary>
+        /// Lorsque le joueur perd la partie.
+        /// </summary>
         private void Perdu()
         {
+            //  La partie est terminé. Il sera impossible de cliquer.
             PartieTermine = true;
+            //  Statut du joueur
             JoueurMort = true;
+            // Quelqu'un inscrit à l'event Terminer? Si oui, on le lance.
             if (Terminer != null)
+                // Lance l'évênement avec comme sender le statut du joueur
+                // TODO: Utiliser sender et EventArgs comme il faut parce que je me sens vraiment mal d'écrire sa.
                 Terminer(JoueurMort);
         }
 
         private void Gagnee()
         {
+            //  La partie est terminé. Il sera impossible de cliquer.
             PartieTermine = true;
+            //  Statut du joueur
             JoueurMort = false;
+            // Quelqu'un d'inscrit à l'event Terminer? Si oui, on le lance.
             if (Terminer != null)
+                // Lance l'évênement avec comme sender le statut du joueur
+                // TODO: Utiliser sender et EventArgs comme il faut parce que je me sens vraiment mal d'écrire sa.
                 Terminer(JoueurMort);
         }
 
+        /// <summary>
+        /// Lance un évênement signalant une modification des drapeaux
+        /// </summary>
+        /// <param name="rajout">Si un drapeau a été rajouté ou non</param>
         private void ChangementDrapeau(bool rajout)
         {
+            //  Si quelqu'un est inscrit à l'évênement Drapeau.
             if (Drapeau != null)
             {
+                // Lance l'évênement Drapeau avec DrapeauEventArgs selon si oui ou non un drapeau a été retiré ou rajouté.
                 if (rajout)
                     Drapeau(this, DrapeauEventArgs.Rajout);
                 else
@@ -469,9 +535,12 @@ namespace Demineur
 
         }
 
-
+        /// <summary>
+        /// Méthode pour activer les boutons dans les coins de la grille.
+        /// </summary>
         private void ReveleCoins()
         {
+            //  Utilisation des tuples à la place de Point pour aucune raison justifiable.
             List<Tuple<int, int>> listCoord = new List<Tuple<int, int>>();
             //  Coin en haut à gauche
             listCoord.Add(Tuple.Create(0, 0));
