@@ -28,12 +28,14 @@ namespace Demineur
         {
             InitializeComponent();
             //  Initialise la valeur du slider de taille de cases selon les configurations de l'utilisateur.
-            sTaille.Value = App.config.OptionUtilisateur.TailleCases;
+            TailleCases = App.config.OptionUtilisateur.TailleCases;
+            sTaille.Value = TailleCases;
             //  Évênement enregistré dans le code pour éviter que la méthode soit exécuté lors de l'initialisation.
             sTaille.ValueChanged += new RoutedPropertyChangedEventHandler<double>(sTaille_ValueChanged);
 
             // Initialise la valeur de la checkbox des mines de coins selon les configurations de l'utilisateur.
-            chkMinesCoins.IsChecked = App.config.OptionUtilisateur.MinesCoins;
+            MinesCoins = App.config.OptionUtilisateur.MinesCoins;
+            chkMinesCoins.IsChecked = MinesCoins;
         }
 
         /// <summary>
