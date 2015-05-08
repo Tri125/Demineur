@@ -31,9 +31,7 @@ namespace Demineur
         private bool JoueurMort { get; set; }
         private bool PartieTermine { get; set; }
 
-        public readonly int NBR_MINES;
         public readonly int TAILLE_CASES;
-        public readonly bool MINES_COINS;
 
         //  Nombre de cases sans mines restantes qui doivent être dévoilées afin de gagner la partie.
         private int NbrCasesRestantes { get; set; }
@@ -41,15 +39,13 @@ namespace Demineur
         public FenetreChampMines(int largeur, int hauteur, int nbMines, int tailleCase, bool minesCoins)
         {
             TAILLE_CASES = tailleCase;
-            MINES_COINS = minesCoins;
-            NBR_MINES = nbMines;
 
             InitializeComponent();
 
             // Générer la structure du champ de mines.
-            Jeu = new ChampMines(largeur, hauteur, NBR_MINES, MINES_COINS);
+            Jeu = new ChampMines(largeur, hauteur, nbMines, minesCoins);
 
-            NbrCasesRestantes = (largeur * hauteur) - NBR_MINES;
+            NbrCasesRestantes = (largeur * hauteur) - nbMines;
 
             // Modifie la Grid pour correspondre au champ de mine du jeu.
             genererGrilleJeu();
@@ -63,7 +59,7 @@ namespace Demineur
             JoueurMort = false;
 
             //  Si dans les configurations l'utilisateur ne veut pas de mines dans les coins
-            if (!MINES_COINS)
+            if (!minesCoins)
                 //  Dévoile les coins comme si le joueur aurait cliqué sur les boutons.
                 ReveleCoins();
 
