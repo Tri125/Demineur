@@ -236,16 +236,13 @@ namespace Demineur
         {
             if (!PartieTermine)
             {
-                Console.WriteLine("IN");
                 if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
                 {
-                    Console.WriteLine("Double");
                     if (sender is Border)
                     {
                         Border b = sender as Border;
                         int column = Grid.GetColumn(b);
                         int row = Grid.GetRow(b);
-                        Console.WriteLine("Column : " + column + " Row : " + row);
                         int nbrDrapeau = 0;
                         int nbrMines = 0;
                         List<Button> btnList = new List<Button>();
@@ -259,7 +256,7 @@ namespace Demineur
                             int tmpRow = 0;
                             int tmpColumn = 0;
                             ObtenirCoordGrille(courant, ref tmpRow, ref tmpColumn);
-                            Button btn = buttonFromCoord(tmpColumn, tmpRow);
+                            Button btn = buttonFromCoord(tmpRow, tmpColumn);
                             if (btn.Content is StackPanel)
                                 nbrDrapeau++;
                             btnList.Add(btn);
@@ -292,7 +289,7 @@ namespace Demineur
             }
         }
 
-        private Button buttonFromCoord(int column, int row)
+        private Button buttonFromCoord(int row, int column)
         {
             Object bouton = grdChampMine.Children
             .Cast<UIElement>()
@@ -328,7 +325,7 @@ namespace Demineur
                         int zRow = 0;
                         int zColumn = 0;
                         ObtenirCoordGrille(Jeu.LstZones[column][row].LstVoisins[i], ref zRow, ref zColumn);
-                        Button btn = buttonFromCoord(zColumn, zRow);
+                        Button btn = buttonFromCoord(zRow, zColumn);
                         if (btn.Visibility == System.Windows.Visibility.Visible)
                             ActivateButton(btn);
                     }
@@ -465,10 +462,14 @@ namespace Demineur
         private void ReveleCoins()
         {
             List<Tuple<int, int>> listCoord = new List<Tuple<int, int>>();
+            //  Coin en haut à gauche
             listCoord.Add(Tuple.Create(0, 0));
+            //  Coin en haut à droite
             listCoord.Add(Tuple.Create(0, Jeu.LargeurChampMine - 1));
-            listCoord.Add(Tuple.Create(Jeu.LargeurChampMine - 1, 0));
-            listCoord.Add(Tuple.Create(Jeu.LargeurChampMine - 1, Jeu.HauteurChampMine - 1));
+            //  Coin en bas à gauche
+            listCoord.Add(Tuple.Create(Jeu.HauteurChampMine - 1, 0));
+            // Coin en bas à droite
+            listCoord.Add(Tuple.Create(Jeu.HauteurChampMine - 1, Jeu.LargeurChampMine - 1));
 
             foreach (Tuple<int, int> coord in listCoord)
             {
