@@ -11,8 +11,6 @@ namespace Demineur
     /// </summary>
     public class Zone
     {
-        // La taille, en pixel, d'une zone lors de l'affichage.
-        public static int TAILLE_ZONE;
         // Le nombre de mines contenues sur les Zones voisines de cette zone.
         private int nbrMinesVoisins;
 
@@ -44,9 +42,6 @@ namespace Demineur
         /// </summary>
         public Zone()
         {
-            // Assigne TAILLE_ZONE selon l'option de configuration de l'utilisateur.
-            // TODO Ne pas changer l'attribut static à chaque instance...
-            TAILLE_ZONE = App.config.OptionUtilisateur.TailleCases;
         }
 
         #region Méthodes

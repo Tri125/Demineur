@@ -19,25 +19,37 @@ namespace Demineur
     /// </summary>
     public partial class FenetreChampMines : UserControl
     {
+        //  Event et delegate lorsqu'une partie de jeu est terminé.
         public delegate void PartieTermineEventHandler(object sender);
         public event PartieTermineEventHandler Terminer;
 
+        // Event et delegate lorsqu'un drapeau est rajouté/retiré du jeu.
         public delegate void DrapeauEventHandler(object sender, DrapeauEventArgs e);
         public event DrapeauEventHandler Drapeau;
 
         private ChampMines Jeu { get; set; }
         private bool JoueurMort { get; set; }
         private bool PartieTermine { get; set; }
-        private int nbrCasesRestantes;
 
-        public FenetreChampMines(int largeur, int hauteur, int nbMines)
+        public readonly int NBR_MINES;
+        public readonly int TAILLE_CASES;
+        public readonly bool MINES_COINS;
+
+        //  Nombre de cases sans mines restantes qui doivent être dévoilées afin de gagner la partie.
+        private int NbrCasesRestantes { get; set; }
+
+        public FenetreChampMines(int largeur, int hauteur, int nbMines, int tailleCase, bool minesCoins)
         {
+            TAILLE_CASES = tailleCase;
+            MINES_COINS = minesCoins;
+            NBR_MINES = nbMines;
+
             InitializeComponent();
 
             // Générer la structure du champ de mines.
-            Jeu = new ChampMines(largeur, hauteur, nbMines);
+            Jeu = new ChampMines(largeur, hauteur, NBR_MINES);
 
-            nbrCasesRestantes = (largeur * hauteur) - nbMines;
+            NbrCasesRestantes = (largeur * hauteur) - NBR_MINES;
 
             // Modifie la Grid pour correspondre au champ de mine du jeu.
             genererGrilleJeu();
@@ -50,8 +62,11 @@ namespace Demineur
 
             JoueurMort = false;
 
-            if (!App.config.OptionUtilisateur.MinesCoins)
+            //  Si dans les configurations l'utilisateur ne veut pas de mines dans les coins
+            if (!MINES_COINS)
+                //  Dévoile les coins comme si le joueur aurait cliqué sur les boutons.
                 ReveleCoins();
+
         }
 
         /// <summary>
@@ -67,14 +82,14 @@ namespace Demineur
             for (int i = 0; i < Jeu.LargeurChampMine; i++)
             {
                 colDefinition = new ColumnDefinition();
-                colDefinition.Width = new GridLength(Zone.TAILLE_ZONE);
+                colDefinition.Width = new GridLength(TAILLE_CASES);
 
                 grdChampMine.ColumnDefinitions.Add(colDefinition);
             }
             for (int i = 0; i < Jeu.HauteurChampMine; i++)
             {
                 rowDefinition = new RowDefinition();
-                rowDefinition.Height = new GridLength(Zone.TAILLE_ZONE);
+                rowDefinition.Height = new GridLength(TAILLE_CASES);
 
                 grdChampMine.RowDefinitions.Add(rowDefinition);
             }
@@ -95,7 +110,7 @@ namespace Demineur
                 bImg = new BitmapImage();
                 bImg.BeginInit();
                 bImg.UriSource = new Uri(@"Images\mine.png", UriKind.RelativeOrAbsolute);
-                bImg.DecodePixelWidth = Zone.TAILLE_ZONE * 10;
+                bImg.DecodePixelWidth = TAILLE_CASES * 10;
                 bImg.EndInit();
 
                 imageZone.Source = bImg;
@@ -106,7 +121,7 @@ namespace Demineur
                 {
                     bImg = new BitmapImage();
                     bImg.BeginInit();
-                    bImg.DecodePixelWidth = Zone.TAILLE_ZONE * 10;  // Définir plus grand que requis?
+                    bImg.DecodePixelWidth = TAILLE_CASES * 10;  // Définir plus grand que requis?
 
                     switch (nbMines)
                     {
@@ -200,8 +215,8 @@ namespace Demineur
                 {
                     btnCouverture = new Button();
 
-                    btnCouverture.Height = Zone.TAILLE_ZONE;
-                    btnCouverture.Width = Zone.TAILLE_ZONE;
+                    btnCouverture.Height = TAILLE_CASES;
+                    btnCouverture.Width = TAILLE_CASES;
                     btnCouverture.Focusable = false;
                     // On précise les gestionnaires d'évènements pour le bouton.
                     btnCouverture.Click += new RoutedEventHandler(btnCouverture_Click);
@@ -298,7 +313,7 @@ namespace Demineur
             }
             if (btnSender.Visibility == System.Windows.Visibility.Hidden)
                 return;
-            nbrCasesRestantes--;
+            NbrCasesRestantes--;
             btnSender.Visibility = Visibility.Hidden;
 
             column = Grid.GetColumn(btnSender);
@@ -320,7 +335,7 @@ namespace Demineur
                 }
             }
             ReveleBordure(row, column);
-            if (nbrCasesRestantes == 0)
+            if (NbrCasesRestantes == 0)
             {
                 Gagnee();
             }
@@ -332,7 +347,7 @@ namespace Demineur
                 BitmapImage bImg = new BitmapImage();
                 bImg.BeginInit();
                 bImg.UriSource = new Uri(@"Images\mine_explosion.png", UriKind.RelativeOrAbsolute);
-                bImg.DecodePixelWidth = Zone.TAILLE_ZONE;
+                bImg.DecodePixelWidth = TAILLE_CASES;
                 bImg.EndInit();
                 imgBombe.Source = bImg;
 
@@ -375,7 +390,7 @@ namespace Demineur
                     BitmapImage bImg = new BitmapImage();
                     bImg.BeginInit();
                     bImg.UriSource = new Uri(@"Images\drapeau.png", UriKind.RelativeOrAbsolute);
-                    bImg.DecodePixelWidth = Zone.TAILLE_ZONE;
+                    bImg.DecodePixelWidth = TAILLE_CASES;
                     bImg.EndInit();
                     img.Source = bImg;
 

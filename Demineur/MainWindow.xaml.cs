@@ -71,7 +71,7 @@ namespace Demineur
             }
             // Pas besoin de vérifier s'il était déjà présent ou non.
             gridPrincipale.Children.Remove(fenetreJeu);
-            fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines);
+            fenetreJeu = new FenetreChampMines(largeur, hauteur, nbrMines, App.config.OptionUtilisateur.TailleCases, App.config.OptionUtilisateur.MinesCoins);
 
             // Inscription aux évênements de FenetreChampMines pour savoir lorsque la partie est terminé et lorsqu'un drapeau est enlevé/placé.
             fenetreJeu.Terminer += new FenetreChampMines.PartieTermineEventHandler(ChangeLabelJeu);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demineur
 {
+    //  EventArgs utilisé pour envoyer l'information à un évênement si un drapeau a été rajouté ou retiré.
     public class DrapeauEventArgs : EventArgs
     {
         private DrapeauEventArgs() { }
