@@ -3,15 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Paramètres de la nouvelle partie" ResizeMode="NoResize" Height="245" Width="439" Name="fnPartiPerso">
     <Grid>
+        <!-- Boîtier regroupant les RadioButton du niveau de partie voulu. -->
         <GroupBox Header="Niveau" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Height="142" Width="205">
             <Grid>
+                <!-- Par défaut le niveau débutant est choisit. En prendre un par défaut permet de faire des suppositions dans le code pour éviter de faire des vérifications -->
                 <RadioButton Name="rdDebutant" Content="Débutant" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,15,0,0" ToolTip="5x5 - 5 mines"/>
                 <RadioButton Name="rdAvance" Content="Avancé" Margin="12,52,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="15x15 - 60 mines"/>
                 <RadioButton Name="rdPerso" Content="Personnalisé" Margin="11,91,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
             </Grid>
         </GroupBox>
+        <!-- Boîtier regroupant les paramètres personnalisé. Binding sur le RadioButton de niveau personnalisé pour désactivé/activé tout les contrôles de la GroupBox. -->
         <GroupBox Header="Paramètres de jeu" IsEnabled="{Binding ElementName=rdPerso, Path=IsChecked}" HorizontalAlignment="Left" Margin="220,10,0,0" VerticalAlignment="Top" Height="142" Width="205">
             <Grid>
+                <!-- Chaque TextBox se partagent la même méthode pour l'évênement PreviewKeyDown et PreviewTextInput puisque la logique est la même. -->
                 <Label Content="Largeur de la grille : " HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top"/>
                 <TextBox Name="txtLargeur" PreviewKeyDown="txtNumeric_PreviewKeyDown"  PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="15" TextAlignment="Center" VerticalAlignment="Top" Margin="137,8,0,0" Width="44" Height="24"/>
                 <Label Content="Hauteur de la grille : " HorizontalAlignment="Left" Margin="12,47,0,0" VerticalAlignment="Top"/>
@@ -20,7 +24,9 @@
                 <TextBox Name="txtMines" PreviewKeyDown="txtNumeric_PreviewKeyDown" PreviewTextInput="txtNumeric_PreviewTextInput" HorizontalAlignment="Left" Text="4" TextAlignment="Center" VerticalAlignment="Top" Margin="137,88,0,0" Width="44"/>
             </Grid>
         </GroupBox>
+        <!-- Bouton par défault, donc appuyé lorsque l'utilisateur appuis sur ENTRER. -->
         <Button IsDefault="True" Name="btnJouer" Content="Jouer" HorizontalAlignment="Left" Margin="120,166,0,0" VerticalAlignment="Top" Width="75" Click="btnJouer_Click"/>
+        <!-- Bouton cancel, donc appuyé lorsque l'utilisateur appuis sur ESC. -->
         <Button IsCancel="True" Name="btnAnnuler" Content="Annuler" HorizontalAlignment="Left" Margin="220,166,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>

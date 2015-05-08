@@ -45,6 +45,7 @@ namespace Demineur
         public Zone()
         {
             // Assigne TAILLE_ZONE selon l'option de configuration de l'utilisateur.
+            // TODO Ne pas changer l'attribut static à chaque instance...
             TAILLE_ZONE = App.config.OptionUtilisateur.TailleCases;
         }
 

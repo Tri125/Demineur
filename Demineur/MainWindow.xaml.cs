@@ -36,6 +36,8 @@ namespace Demineur
             if (fenPartie.ShowDialog().Value)
             {
                 //  Récupère les propriétés de la fenêtre pour créer une nouvelle partie.
+                //  Selon l'exécution les paramètres sont déjà dans le fichier de configuration, mais il est préférable prendre les données de la fenêtre
+                //  si le fichier ne peut être écrit, la partie sera lancé avec les paramètres d'usines.
                 int largeur = fenPartie.Largeur;
                 int hauteur = fenPartie.Hauteur;
                 int nbrMines = fenPartie.NbrMines;
