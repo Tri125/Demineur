@@ -93,8 +93,10 @@ namespace Demineur
 
 
         /// <summary>
-        /// DADASDFAFASFGASGASGSGSDGDemande à la zone de vérifier son contenu et ses voisins et d'ajuster son image en conséquence.
+        /// Retourne une image selon le nombre de mines adjacentes et contientMine.
         /// </summary>
+        /// <param name="contientMine">Vrai si nous voulons l'image d'une case avec une mine</param>
+        /// <param name="nbMines">Nombre de mines adjacentes</param>
         private Image assignerImage(bool contientMine, int nbMines = 0)
         {
             Image imageZone;
@@ -175,8 +177,10 @@ namespace Demineur
 
                 for (int j = 0; j <= colonne.Count - 1; j++)
                 {
+                    //  Récupère une image selon le nombre de mines adjacentes et si cette Zone contient une mine
                     imgAffichage = assignerImage(colonne[j].ContientMine, colonne[j].NbrMinesVoisins);
 
+                    //  Border transparent sur chaque case. Lorsque la case est dévoilé, le border sera mit noir.
                     border = new Border();
                     border.BorderBrush = Brushes.Transparent;
                     border.BorderThickness = new Thickness(1, 1, 1, 1);
@@ -188,7 +192,11 @@ namespace Demineur
                     border.Child = imgAffichage;
                     grdChampMine.Children.Add(border);
 
+                    //  Pour les cases vides, imgAffichage a une source null, ce qui fait qu'elle ne sera pas rendu à l'écran.
+                    //  Si elle n'est pas rendu à l'écran, elle ne pourra pas Handler des évênements, comme par example le double clique.
+                    //  En rajoutant un Background au border, le contrôle sera rendu et les évênements seront traités.
                     border.Background = Brushes.Transparent;
+                    //  Pour le double clique sur une case dévoilée.
                     border.MouseDown += new MouseButtonEventHandler(btnCouverture_MouseDown);
                 }
             }
@@ -228,44 +236,51 @@ namespace Demineur
             }
         }
 
+        // Lorsqu'un bouton de la sourit est appuyé
         private void btnCouverture_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!PartieTermine)
             {
+                //  Si le bouton de gauche et de droite sont appuyés, alors c'est un double clique.
                 if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Pressed)
                 {
                     if (sender is Border)
                     {
                         Border b = sender as Border;
-                        int column = Grid.GetColumn(b);
-                        int row = Grid.GetRow(b);
-                        int nbrDrapeau = 0;
-                        int nbrMines = 0;
-                        List<Button> btnList = new List<Button>();
-                        for (int i = 0; i < 8; i++)
-                        {
-                            Zone courant = Jeu.LstZones[column][row].LstVoisins[i];
-                            if (courant == null)
-                                continue;
-                            if (courant.ContientMine)
-                                nbrMines++;
-                            int tmpRow = 0;
-                            int tmpColumn = 0;
-                            ObtenirCoordGrille(courant, ref tmpRow, ref tmpColumn);
-                            Button btn = buttonFromCoord(tmpRow, tmpColumn);
-                            if (btn.Content is StackPanel)
-                                nbrDrapeau++;
-                            btnList.Add(btn);
-                        }
-
-                        if (nbrDrapeau == nbrMines)
-                        {
-                            foreach (Button btn in btnList)
-                            {
-                                ActivateButton(btn);
-                            }
-                        }
+                        DoubleClique(b);
                     }
+                }
+            }
+        }
+
+        private void DoubleClique(Border sender)
+        {
+            int column = Grid.GetColumn(sender);
+            int row = Grid.GetRow(sender);
+            int nbrDrapeau = 0;
+            int nbrMines = 0;
+            List<Button> btnList = new List<Button>();
+            for (int i = 0; i < 8; i++)
+            {
+                Zone courant = Jeu.LstZones[column][row].LstVoisins[i];
+                if (courant == null)
+                    continue;
+                if (courant.ContientMine)
+                    nbrMines++;
+                int tmpRow = 0;
+                int tmpColumn = 0;
+                ObtenirCoordGrille(courant, ref tmpRow, ref tmpColumn);
+                Button btn = buttonFromCoord(tmpRow, tmpColumn);
+                if (btn.Content is StackPanel)
+                    nbrDrapeau++;
+                btnList.Add(btn);
+            }
+
+            if (nbrDrapeau == nbrMines)
+            {
+                foreach (Button btn in btnList)
+                {
+                    ActivateButton(btn);
                 }
             }
         }
