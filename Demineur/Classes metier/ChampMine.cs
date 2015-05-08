@@ -16,7 +16,8 @@ namespace Demineur
 
         #endregion
 
-        public ChampMines(int largeur, int hauteur, int nbMines)
+        //  Valeur par défaut de minesCoins pour garder l'interface du constructeur stable.
+        public ChampMines(int largeur, int hauteur, int nbMines, bool minesCoins = true)
         {
             if (largeur < 2 || hauteur < 2)
             {
@@ -26,7 +27,7 @@ namespace Demineur
             LargeurChampMine = largeur;
             HauteurChampMine = hauteur;
 
-            initialiserChampMines(nbMines);
+            initialiserChampMines(nbMines, minesCoins);
         }
 
         #region Méthodes
@@ -35,11 +36,12 @@ namespace Demineur
         /// Cette méthode ordonne les étapes de création d'un champ de mine.
         /// </summary>
         /// <param name="nbMines">Le nombre de mines qui doivent se retrouver dans le champ de mines.</param>
-        private void initialiserChampMines(int nbMines)
+        /// <param name="minesCoins">Si oui ou non nous voulons générer des mines dans les coins.</param>
+        private void initialiserChampMines(int nbMines, bool minesCoins)
         {
             genererChampMines(LargeurChampMine, HauteurChampMine);
             //  Vérifie l'option utilisateur de mines dans les coins
-            if (App.config.OptionUtilisateur.MinesCoins)
+            if (minesCoins)
                 assignerMines(nbMines);
             else
                 // Si l'utilisateur ne veut pas de mines dans les coins, une autre méthode est exécuté

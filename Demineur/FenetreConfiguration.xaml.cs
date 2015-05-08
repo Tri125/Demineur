@@ -20,6 +20,10 @@ namespace Demineur
     /// </summary>
     public partial class FenetreConfiguration : Window
     {
+
+        public int TailleCases { get; set; }
+        public bool MinesCoins { get; set; }
+
         public FenetreConfiguration()
         {
             InitializeComponent();
@@ -40,6 +44,8 @@ namespace Demineur
         private void btnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
             //  Met à jour le fichier de configuration.
+            App.config.OptionUtilisateur.MinesCoins = MinesCoins;
+            App.config.OptionUtilisateur.TailleCases = TailleCases;
             App.config.EnregistreConfigCourante();
             this.Close();
         }
@@ -51,8 +57,7 @@ namespace Demineur
         /// <param name="e"></param>
         private void sTaille_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            //  Enregistre la valeur du Slider dans les configurations.
-            App.config.OptionUtilisateur.TailleCases = (int)e.NewValue;
+            TailleCases = (int)e.NewValue;
         }
 
         private void CheckBox_Changed(object sender, RoutedEventArgs e)
@@ -62,11 +67,11 @@ namespace Demineur
                 CheckBox checkBox = sender as CheckBox;
                 if (checkBox.IsChecked == true)
                 {
-                    App.config.OptionUtilisateur.MinesCoins = true;
+                    MinesCoins = true;
                 }
                 else
                 {
-                    App.config.OptionUtilisateur.MinesCoins = false;
+                    MinesCoins = false;
                 }
             }
         }

@@ -47,7 +47,7 @@ namespace Demineur
             InitializeComponent();
 
             // Générer la structure du champ de mines.
-            Jeu = new ChampMines(largeur, hauteur, NBR_MINES);
+            Jeu = new ChampMines(largeur, hauteur, NBR_MINES, MINES_COINS);
 
             NbrCasesRestantes = (largeur * hauteur) - NBR_MINES;
 
